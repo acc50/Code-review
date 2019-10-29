@@ -1,0 +1,22 @@
+﻿  7.cpp
+  file2buf.cpp
+  Object_Inner_Triangle.cpp
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(46): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(47): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(51): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(52): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(57): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(58): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(73): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_inner_triangle.cpp(74): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Object_Triangle.cpp
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(48): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(49): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(52): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(53): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(56): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(57): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(73): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\home\desktop\실습5,6,7\training7\training7\object_triangle.cpp(74): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+  Training7.vcxproj -> D:\Home\Desktop\실습5,6,7\Training7\Debug\Training7.exe
