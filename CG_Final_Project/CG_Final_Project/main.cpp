@@ -66,9 +66,9 @@ GLvoid drawScene()
 	glEnable(GL_DEPTH_TEST);
 	glUseProgram(ShaderProgram);
 	view(ShaderProgram,view_point);
-	Myprojection(ShaderProgram);
+	Myprojection(ShaderProgram,view_point);
 
-	draw_floor(ShaderProgram, VBO, EBO);
+	draw_map(ShaderProgram, VBO, EBO);
 
 	glutSwapBuffers();
 

@@ -148,7 +148,7 @@ void CreateAxis(GLuint& Axis)
 
 void view(GLuint ShaderProgram,EViewPoint viewPoint)
 {
-	glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 5.0f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
 	glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
 	switch (viewPoint)
 	{
@@ -156,7 +156,7 @@ void view(GLuint ShaderProgram,EViewPoint viewPoint)
 
 		break;
 	case E_TOP_VIEW:
-		cameraPos = glm::vec3(0.0f, 20.0f, 0.1f); //왜 z가 0이면 안보이지?
+		cameraPos = glm::vec3(0.0f, 20.0f, 0.01f); //왜 z가 0이면 안보이지?
 		cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
 		break;
 	default:
@@ -170,9 +170,21 @@ void view(GLuint ShaderProgram,EViewPoint viewPoint)
 	unsigned int viewLocation = glGetUniformLocation(ShaderProgram, "viewTransform");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 }
-void Myprojection(GLuint ShaderProgram) {
+void Myprojection(GLuint ShaderProgram, EViewPoint viewPoint) {
 	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 1000.0f);
+	switch (viewPoint)
+	{
+	case E_DEFAULT_VIEW:
+		projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 1000.0f);
+		break;
+	case E_TOP_VIEW:
+		projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 20.0f);
+		break;
+	default:
+		break;
+
+	}
+	
 	unsigned int projectionLocation = glGetUniformLocation(ShaderProgram, "projectionTransform");
 	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, &projection[0][0]);
 }
