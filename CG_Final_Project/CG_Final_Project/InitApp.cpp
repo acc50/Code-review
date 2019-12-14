@@ -146,12 +146,23 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram)
+void view(GLuint ShaderProgram,EViewPoint viewPoint)
 {
-	static float t = 0.0f;
-	t += 0.01f;
 	glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 5.0f);
 	glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+	switch (viewPoint)
+	{
+	case E_DEFAULT_VIEW:
+
+		break;
+	case E_TOP_VIEW:
+		cameraPos = glm::vec3(0.0f, 20.0f, 0.1f); //왜 z가 0이면 안보이지?
+		cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		break;
+	default:
+		break;
+	}
+	
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::lookAt(cameraPos, cameraDirection, cameraUp);

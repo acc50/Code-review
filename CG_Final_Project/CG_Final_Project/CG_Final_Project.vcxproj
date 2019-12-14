@@ -142,7 +142,7 @@
     <ClCompile Include="file2buf.cpp" />
     <ClCompile Include="InitApp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mapp.cpp" />
+    <ClCompile Include="map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file2buf.h" />

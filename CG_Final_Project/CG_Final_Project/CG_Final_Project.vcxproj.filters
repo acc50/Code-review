@@ -24,7 +24,7 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="mapp.cpp">
+    <ClCompile Include="map.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
