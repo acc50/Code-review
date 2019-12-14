@@ -161,7 +161,7 @@ void view(GLuint ShaderProgram,EViewPoint viewPoint)
 		break;
 	default:
 		break;
-		//
+
 	}
 	
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
