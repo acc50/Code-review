@@ -21,8 +21,7 @@ GLuint VBO;
 GLuint EBO;
 
 
-
-
+EViewPoint view_point = E_DEFAULT_VIEW;
 void Timer(int a);
 void InputKey(unsigned char key, int x, int y);
 void main(int argc, char** argv)
@@ -60,15 +59,16 @@ void Timer(int a)
 }
 GLvoid drawScene()
 {
+	//
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glUseProgram(ShaderProgram);
-	view(ShaderProgram);
-	Myprojection(ShaderProgram);
+	view(ShaderProgram,view_point);
+	Myprojection(ShaderProgram,view_point);
 
-	draw_floor(ShaderProgram, VBO, EBO);
+	draw_map(ShaderProgram, VBO, EBO);
 
 	glutSwapBuffers();
 
@@ -85,6 +85,12 @@ void InputKey(unsigned char key, int x, int y)
 	static bool culling = false;
 	switch (key)
 	{
+	case '1':
+		view_point = E_DEFAULT_VIEW;
+		break;
+	case '3':
+		view_point = E_TOP_VIEW;
+		break;
 	case 'y':
 
 		break;

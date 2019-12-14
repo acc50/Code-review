@@ -9,3 +9,9 @@
 #include <vector>
 #include <cmath>
 #include "file2buf.h"
+
+enum EViewPoint
+{
+	
+	E_DEFAULT_VIEW=0,E_TOP_VIEW
+};
