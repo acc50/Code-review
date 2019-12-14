@@ -146,10 +146,13 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram,EViewPoint viewPoint)
+void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, float AtX,float AtY)
 {
-	glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
-	glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
+	glm::vec3 cameraPos = glm::vec3(x, y, z);
+	glm::mat4 abc = glm::mat4(1.0f);
+
+	glm::vec3 cameraDirection = glm::vec3(AtX, AtY, AtX*AtY);
 	switch (viewPoint)
 	{
 	case E_DEFAULT_VIEW:
@@ -175,7 +178,7 @@ void Myprojection(GLuint ShaderProgram, EViewPoint viewPoint) {
 	switch (viewPoint)
 	{
 	case E_DEFAULT_VIEW:
-		projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 1000.0f);
+		projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 10.0f);
 		break;
 	case E_TOP_VIEW:
 		projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 20.0f);
@@ -255,4 +258,5 @@ GLvoid drawCon(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)
 	glDisableVertexAttribArray(pos_id);
 	glDisableVertexAttribArray(frag_id);
 }
+
 

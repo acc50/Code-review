@@ -77,10 +77,10 @@ void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	draw_floor(ShaderProgram, VBO, EBO);
 
 	// 좌표점찍기
-	for (float i = -5.0f; i <= 5.0f; i += 1.0f) {
+	/*for (float i = -5.0f; i <= 5.0f; i += 1.0f) {
 		for (float j = -5.0f; j <= 5.0f; j += 1.0f)
 			draw_wall(ShaderProgram, VBO, EBO, j, i, defalut_width2, defalut_width2);
-	}
+	}*/
 
 	//좌표줄때 옆으로 두배늘리고 싶으면 x좌표를 2배늘린것의 중간값을 줘야됨
 	//ex   좌표 0~2로가는 길이의 벽만들려면 초기값을 1로하고 가로너비를 2를 준다.
@@ -174,9 +174,9 @@ void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	draw_wall(ShaderProgram, VBO, EBO, 4.5f, 3.0f, defalut_width, defalut_width2);
 
 	//테두리
-	draw_wall(ShaderProgram, VBO, EBO, 0.0f, -5.0f, 10.0f, defalut_width2);
+	/*draw_wall(ShaderProgram, VBO, EBO, 0.0f, -5.0f, 10.0f, defalut_width2);
 	draw_wall(ShaderProgram, VBO, EBO, 0.0f, 5.0f, 10.0f, defalut_width2);
 	draw_wall(ShaderProgram, VBO, EBO, -5.0f, 0.0f, defalut_width2, 10.0f);
-	draw_wall(ShaderProgram, VBO, EBO, 5.0f, 0.0f, defalut_width2, 10.0f);
+	draw_wall(ShaderProgram, VBO, EBO, 5.0f, 0.0f, defalut_width2, 10.0f);*/
 	
 }
