@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #include <Windows.h>
 #include "InitApp.h"
 #include "Pacman.h"
@@ -18,6 +16,7 @@ GLuint EBO;
 
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
+GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
 GLfloat tempx = 0.0f, tempy = 0.0f;		// 이전의 마우스 값
 
 glm::vec3 EYE = glm::vec3(0.0f, 1.0f, 0.5f);
@@ -36,6 +35,7 @@ EViewPoint view_point = E_DEFAULT_VIEW;
 
 void Mouse(int button, int state, int x, int y);
 void MouseMotion(int x, int y);
+void PassiveMouse(int x, int y);
 void Timer(int a);
 void InputKey(unsigned char key, int x, int y);
 void KeyUP(unsigned char key, int x, int y);
@@ -69,6 +69,7 @@ int main(int argc, char** argv)
 	glutKeyboardUpFunc(KeyUP);			// 키보드 떼는 것
 	glutMouseFunc(Mouse);				// 마우스 클릭
 	glutMotionFunc(MouseMotion);
+	glutPassiveMotionFunc(PassiveMouse);
 	glutTimerFunc(10, Timer, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
@@ -265,36 +266,42 @@ void MouseMotion(int x, int y)
 
 
 		// 현재 프레임과 이전프레임의 마우스 좌표 차이
-		xAngle += (my - tempy) * 3.6;				// 위아래 이동 시 x축 기준 회전		뒤의 숫자는 배율
-		yAngle += (mx - tempx) / 2.0;				// 좌우 이동시 y축 기준 회전
+		xAngle = (my - tempy) * 100;				// 위아래 이동 시 x축 기준 회전		뒤의 숫자는 배율
+		yAngle = (mx - tempx) * 100;				// 좌우 이동시 y축 기준 회전
+
+		yaw += yAngle;
+		pitch += xAngle;
+
+		if (pitch > 89.0f)
+			pitch = 89.0f;
+		if (pitch < -89.0f)
+			pitch = -89.0f;
 
 
-		std::cout << mx << " " << my << " " << tempx << " " << tempy << std::endl;
-
-
-
-		glm::mat4 r = glm::mat4(1.0f);		// 회전
-
-		r = glm::rotate(r, glm::radians(1.0f), glm::vec3(xAngle, yAngle, 0.0f));
-
-		glm::mat3 rm = glm::mat3(r);		// 위의 회전행렬에서 3x3 부분만 따옴
-
+		AT.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		AT.y = sin(glm::radians(pitch));
+		AT.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
 		// AT 의 EYE 기준 회전
 		AT = AT - EYE;		// EYE를 원점이동
-		AT = AT * rm;		// AT을 회전
+
+		AT.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		AT.y = sin(glm::radians(pitch));
+		AT.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
 		AT = AT + EYE;		// 이동했던 만큼 다시 역이동
-
-		AT.y += xAngle;
-
-		xAngle = 0.0f;
-		yAngle = 0.0f;
 
 		tempx = mx;
 		tempy = my;
 
 		glutPostRedisplay();
 	}
+}
+
+void PassiveMouse(int x, int y)
+{
+	Set_Cursor();
+	glutPostRedisplay();
 }
 
 bool check_move()		// 이동키가 눌려있으면 true, 아니면 false
@@ -307,19 +314,11 @@ bool check_move()		// 이동키가 눌려있으면 true, 아니면 false
 
 void Set_Cursor()
 {
-	int width = WINDOW_WIDTH / 2;
-	int height = WINDOW_HEIGHT / 2;
-
 	int x = WINDOW_WIDTH / 2 + WINDOW_POSITION + 11;
 	int y = WINDOW_HEIGHT / 2 + WINDOW_POSITION + 31;
 
 	SetCursorPos(x, y);		// 시작 마우스 커서 위치 설정
 
-
-	//tempx = (GLfloat)(x - width) / width;			// 시작 마우스 위치의 openGL x좌표를 받음
-	//tempy = (GLfloat)(height - y) / height;		// 시작 마우스 위치의 openGL y좌표를 받음
-
 	tempx = 0.0f;
 	tempy = 0.0f;
 }
->>>>>>> parent of 7e56ed6... 移대찓??援ы쁽
