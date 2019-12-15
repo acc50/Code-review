@@ -13,7 +13,10 @@ GLuint ConVBO;
 GLuint ConEBO;
 GLuint VBO;
 GLuint EBO;
+GLuint SVBO;  //구 정점정보
+GLuint SNVBO; //구 노멀정보
 
+float thronTime = 0.0f;
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
 GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
@@ -37,6 +40,7 @@ void Mouse(int button, int state, int x, int y);
 void MouseMotion(int x, int y);
 void PassiveMouse(int x, int y);
 void Timer(int a);
+void myTimer(int a);
 void InputKey(unsigned char key, int x, int y);
 void KeyUP(unsigned char key, int x, int y);
 bool check_move();								// 이동키가 눌렸나 확인하는 함수
@@ -59,7 +63,7 @@ int main(int argc, char** argv)
 	glEnable(GL_CULL_FACE);
 	CreateCon(ConEBO, ConVBO);
 	CreateCube(ShaderProgram, EBO, VBO);
-
+	CreateSphere(SVBO, SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall();				// 벽 좌표 설정
 
@@ -70,11 +74,20 @@ int main(int argc, char** argv)
 	glutMouseFunc(Mouse);				// 마우스 클릭
 	glutMotionFunc(MouseMotion);
 	glutPassiveMotionFunc(PassiveMouse);
+	glutTimerFunc(10, myTimer, 2);
 	glutTimerFunc(10, Timer, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
 }
+void myTimer(int a)
+{
 
+	if (thronTime > 0.6f)
+		thronTime = -1.0f;
+	thronTime += 0.1f;
+	glutPostRedisplay();
+	glutTimerFunc(100, myTimer, 2);
+}
 void Timer(int a)
 {
 	if (move) {
@@ -105,7 +118,7 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, VBO, EBO);
+	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO);
 
 	//임시 플레이어 위치
 	//draw_wall(ShaderProgram, VBO, EBO, EYE.x, EYE.z, 0.5f, 0.5f);		// 카메라위치 = 캐릭터위치 -> 1인칭
@@ -113,7 +126,7 @@ GLvoid drawScene()
 	//임시 플레이어 위치
 	pacman->Draw(ShaderProgram, VBO, EBO);
 
-
+	draw_sphere(ShaderProgram, SVBO, SNVBO, 0.0f, 0.0f);
 	float r = 3.0f;
 
 
