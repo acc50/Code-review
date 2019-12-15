@@ -67,23 +67,31 @@ void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm
 	glm::vec3 right_dir = glm::vec3(-left_dir.x, -left_dir.y, -left_dir.z);
 
 	if (Up) {
-		EYE += front_dir / step;
-		AT += front_dir / step;
+		EYE.x += front_dir.x / step;
+		EYE.z += front_dir.z / step;
+		AT.x += front_dir.x / step;
+		AT.z += front_dir.z / step;
 	}
 
 	if (Down) {
-		EYE += back_dir / step;
-		AT += back_dir / step;
+		EYE.x += back_dir.x / step;
+		EYE.z += back_dir.z / step;
+		AT.x += back_dir.x / step;
+		AT.z += back_dir.z / step;
 	}
 
 	if (Left) {
-		EYE += left_dir / step;
-		AT += left_dir / step;
+		EYE.x += left_dir.x / step;
+		EYE.z += left_dir.z / step;
+		AT.x += left_dir.x / step;
+		AT.z += left_dir.z / step;
 	}
 
 	if (Right) {
-		EYE += right_dir / step;
-		AT += right_dir / step;
+		EYE.x += right_dir.x / step;
+		EYE.z += right_dir.z / step;
+		AT.x += right_dir.x / step;
+		AT.z += right_dir.z / step;
 	}
 
 	this->Pos = EYE;

@@ -1,5 +1,8 @@
+#include <Windows.h>
 #include "InitApp.h"
 #include "Pacman.h"
+
+#define WINDOW_POSITION 100		// 윈도우가 스크린의 어디에서 시작하는지 -> 스크린 좌상단 기준 x,x 에서 윈도우가 열림
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "freeglut.lib")
@@ -11,8 +14,9 @@ GLuint ConEBO;
 GLuint VBO;
 GLuint EBO;
 
-float dx = 1.0f;
-float dy = 1.0f;
+
+GLfloat xAngle = 0.0f, yAngle = 0.0f;
+GLfloat tempx = 0.0f, tempy = 0.0f;		// 이전의 마우스 값
 
 glm::vec3 EYE = glm::vec3(0.0f, 1.0f, 0.5f);
 glm::vec3 AT = glm::vec3(-1.0f, 1.0f, 0.5f);
@@ -23,20 +27,24 @@ glm::vec3 T_AT = glm::vec3(0.0f, 0.0f, 0.0f);		// 탑뷰기준 카메라 AT
 
 bool Left = false, Right = false, Up = false, Down = false;		// 키 입력
 bool move = false;
+bool click = false;
 Pacman *pacman = new Pacman;
 
 EViewPoint view_point = E_DEFAULT_VIEW;
-void Mouse(int x, int y);
+
+void Mouse(int button, int state, int x, int y);
+void MouseMotion(int x, int y);
 void Timer(int a);
 void InputKey(unsigned char key, int x, int y);
 void KeyUP(unsigned char key, int x, int y);
 bool check_move();								// 이동키가 눌렸나 확인하는 함수
+void Set_Cursor();
 
-void main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(WINDOW_POSITION, WINDOW_POSITION);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutCreateWindow("Example1");
 	glewExperimental = GL_TRUE;
@@ -50,13 +58,15 @@ void main(int argc, char** argv)
 	CreateCon(ConEBO, ConVBO);
 	CreateCube(ShaderProgram, EBO, VBO);
 
+	Set_Cursor();				// 커서 시작지점 설정
 	init_wall();				// 벽 좌표 설정
 
 	InitProgram(ShaderProgram);
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(InputKey);			// 키보드 입력
 	glutKeyboardUpFunc(KeyUP);			// 키보드 떼는 것
-	//glutPassiveMotionFunc(Mouse);
+	glutMouseFunc(Mouse);				// 마우스 클릭
+	glutMotionFunc(MouseMotion);
 	glutTimerFunc(10, Timer, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
@@ -108,6 +118,7 @@ GLvoid drawScene()
 
 
 }
+
 GLvoid Reshape(int w, int h)
 {
 	glViewport(0, 0, w, h);
@@ -174,16 +185,15 @@ void InputKey(unsigned char key, int x, int y)
 	case 'x':
 		break;
 
-	/*case 'q':
-		angleZ += 1.1f;
+	case 'q':
+		glutLeaveMainLoop();
 		break;
-	case 'e':
-		angleZ -= 1.1f;
-		break;*/
 
 	default:
 		break;
 	}
+
+	glutPostRedisplay();
 }
 
 void KeyUP(unsigned char key, int x, int y)
@@ -192,7 +202,7 @@ void KeyUP(unsigned char key, int x, int y)
 	case 'w':
 		Up = false;
 
-		if (!check_move) {		// 이동하지 않으면 move 함수를 false로 만듬
+		if (!check_move()) {		// 이동하지 않으면 move 함수를 false로 만듬
 			move = false;
 		}
 
@@ -201,7 +211,7 @@ void KeyUP(unsigned char key, int x, int y)
 	case 'a':
 		Left = false;
 
-		if (!check_move) {
+		if (!check_move()) {
 			move = false;
 		}
 
@@ -210,7 +220,7 @@ void KeyUP(unsigned char key, int x, int y)
 	case 's':
 		Down = false;
 
-		if (!check_move) {
+		if (!check_move()) {
 			move = false;
 		}
 
@@ -219,39 +229,70 @@ void KeyUP(unsigned char key, int x, int y)
 	case 'd':
 		Right = false;
 
-		if (!check_move) {
+		if (!check_move()) {
 			move = false;
 		}
 
 		break;
 
 	}
+
+	glutPostRedisplay();
 }
 
-
-void Mouse(int x, int y)
+void Mouse(int button, int state, int x, int y)
 {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		click = true;
+	}
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		click = false;
+		Set_Cursor();
+	}
+	glutPostRedisplay();
+}
+
+void MouseMotion(int x, int y)
+{
+	if (click) {
+		int width = WINDOW_WIDTH / 2;
+		int height = WINDOW_HEIGHT / 2;
+
+		GLfloat mx = (GLfloat)(x - width) / (GLfloat)width;			// 마우스 이동한 좌표
+		GLfloat my = (GLfloat)(height - y) / (GLfloat)height;
 
 
-	int width = WINDOW_WIDTH / 2;
-	int height = WINDOW_HEIGHT / 2;
-
-	float value = 0.1f*dx;
-	//AtX = ((float)x - (float)width) / (float)width;
-	//AtY = ((float)y - (float)height) / (-1.0f*(float)height);
-	/*if (AtX + (float)x < (float)WINDOW_WIDTH / 2.0f - 100.0f)
-		dx = -1.0f;
-	else if (AtX + (float)x > (float)WINDOW_WIDTH / 2.0f + 50.0f)
-		dx = +1.0f;*/
-		//
-		//if (AtY + (float)y < (float)WINDOW_HEIGHT / 2.0f - 100.0f)
-		//	dy -= 1.0f;
-		//else if (AtY + (float)x > (float)WINDOW_HEIGHT / 2.0f + 50.0f)
-		//	dy += 1.0f;
-		//std::cout << AtX + (float)x << std::endl;
-		//std::cout << "dx" << dx << std::endl;
+		// 현재 프레임과 이전프레임의 마우스 좌표 차이
+		xAngle += (my - tempy) * 3.6;				// 위아래 이동 시 x축 기준 회전		뒤의 숫자는 배율
+		yAngle += (mx - tempx) / 2.0;				// 좌우 이동시 y축 기준 회전
 
 
+		std::cout << mx << " " << my << " " << tempx << " " << tempy << std::endl;
+
+
+
+		glm::mat4 r = glm::mat4(1.0f);		// 회전
+
+		r = glm::rotate(r, glm::radians(1.0f), glm::vec3(xAngle, yAngle, 0.0f));
+
+		glm::mat3 rm = glm::mat3(r);		// 위의 회전행렬에서 3x3 부분만 따옴
+
+
+		// AT 의 EYE 기준 회전
+		AT = AT - EYE;		// EYE를 원점이동
+		AT = AT * rm;		// AT을 회전
+		AT = AT + EYE;		// 이동했던 만큼 다시 역이동
+
+		AT.y += xAngle;
+
+		xAngle = 0.0f;
+		yAngle = 0.0f;
+
+		tempx = mx;
+		tempy = my;
+
+		glutPostRedisplay();
+	}
 }
 
 bool check_move()		// 이동키가 눌려있으면 true, 아니면 false
@@ -260,4 +301,22 @@ bool check_move()		// 이동키가 눌려있으면 true, 아니면 false
 		return true;
 	else
 		return false;
+}
+
+void Set_Cursor()
+{
+	int width = WINDOW_WIDTH / 2;
+	int height = WINDOW_HEIGHT / 2;
+
+	int x = WINDOW_WIDTH / 2 + WINDOW_POSITION + 11;
+	int y = WINDOW_HEIGHT / 2 + WINDOW_POSITION + 31;
+
+	SetCursorPos(x, y);		// 시작 마우스 커서 위치 설정
+
+
+	//tempx = (GLfloat)(x - width) / width;			// 시작 마우스 위치의 openGL x좌표를 받음
+	//tempy = (GLfloat)(height - y) / height;		// 시작 마우스 위치의 openGL y좌표를 받음
+
+	tempx = 0.0f;
+	tempy = 0.0f;
 }
