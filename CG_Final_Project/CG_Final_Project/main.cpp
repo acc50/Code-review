@@ -322,4 +322,4 @@ void Set_Cursor()
 	tempx = 0.0f;
 	tempy = 0.0f;
 }
->>>>>>> parent of 7e56ed6... 카메라 구현
+>>>>>>> parent of 7e56ed6... 카메??구현
