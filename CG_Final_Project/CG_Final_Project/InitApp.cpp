@@ -146,20 +146,10 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, float AtX,float AtY,float angle)
+void view(GLuint ShaderProgram,EViewPoint viewPoint)
 {
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
-	glm::vec3 cameraPos = glm::vec3(x, y, z);
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 tm = glm::mat4(1.0f);
-	glm::mat4 rm = glm::mat4(1.0f);
-	glm::vec4 at = glm::vec4(x, y, z, 1.0f);
-	tm = glm::translate(tm, glm::vec3(x, y, z));
-	rm = glm::rotate(tm, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = tm;
-	tm = glm::translate(model, glm::vec3(x, 0.0f, 0.0f));
-	at = rm * tm * at;
-	glm::vec3 cameraDirection = glm::vec3(AtX+x,0.0f, at.z);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
+	glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
 	switch (viewPoint)
 	{
 	case E_DEFAULT_VIEW:
@@ -173,6 +163,7 @@ void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, flo
 		break;
 
 	}
+	
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::lookAt(cameraPos, cameraDirection, cameraUp);
@@ -184,7 +175,7 @@ void Myprojection(GLuint ShaderProgram, EViewPoint viewPoint) {
 	switch (viewPoint)
 	{
 	case E_DEFAULT_VIEW:
-		projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 10.0f);
+		projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 1000.0f);
 		break;
 	case E_TOP_VIEW:
 		projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 20.0f);
@@ -264,5 +255,4 @@ GLvoid drawCon(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)
 	glDisableVertexAttribArray(pos_id);
 	glDisableVertexAttribArray(frag_id);
 }
-
 
