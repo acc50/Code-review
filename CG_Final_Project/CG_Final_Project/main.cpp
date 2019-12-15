@@ -10,6 +10,8 @@ GLuint ConEBO;
 GLuint VBO;
 GLuint EBO;
 
+GLuint SVBO;  //구 정점정보
+GLuint SNVBO; //구 노멀정보
 float cameraX = 0.0f, cameraY = 1.0f, cameraZ = 10.0f;
 float dx = 1.0f;
 float dy = 1.0f;
@@ -37,6 +39,7 @@ void main(int argc, char** argv)
 	glEnable(GL_CULL_FACE);
 	CreateCon(ConEBO, ConVBO);
 	CreateCube(ShaderProgram, EBO, VBO);
+	CreateSphere(SVBO, SNVBO);
 
 	init_wall();				// 벽 좌표 설정
 
@@ -75,17 +78,7 @@ GLvoid drawScene()
 	//임시 플레이어 위치
 	draw_wall(ShaderProgram, VBO, EBO, cameraX, cameraZ, 0.5f, 0.5f);
 
-	float r = 3.0f;
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 tm = glm::mat4(1.0f);
-	glm::mat4 rm = glm::mat4(1.0f);
-	glm::vec4 at=glm::vec4(cameraX, cameraY, cameraZ, 1.0f);
-	tm = glm::translate(tm, glm::vec3(cameraX, cameraY, cameraZ));
-	rm = glm::rotate(tm,glm::radians(angleZ), glm::vec3(0.0f, 1.0f, 0.0f));
-	tm = glm::translate(model, glm::vec3(cameraX, 0.0f, 0.0f));
-	at = rm*tm * at;
-	//임시 카메라가 보는점 위치 (at)
-	draw_At(ShaderProgram, VBO, EBO,at.x, at.z, 0.5f, 0.5f);
+	draw_sphere(ShaderProgram, SVBO, SNVBO, 0.0f, 0.0f);
 	
 	glutSwapBuffers();
 

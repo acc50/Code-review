@@ -9,6 +9,8 @@ TrapPoint trapPoint[TRAP_COUNT] = {
 	{-1.5f,3.0f},{1.5f,3.0f},{3.5f,2.0f}
 
 };
+
+
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
 	glm::mat4 model = glm::mat4(1.0f); //최종
@@ -47,6 +49,7 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 
 void draw_wall(GLuint ShaderProgram, GLuint VBO, GLuint EBO, float x, float z, float width, float width2)
 {
+	//
 	glm::mat4 model = glm::mat4(1.0f); //최종
 	glm::mat4 tm = glm::mat4(1.0f);
 	glm::mat4 sm = glm::mat4(1.0f);
@@ -193,9 +196,9 @@ void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO, GLuint ConVBO, GLuin
 	}
 
 	// 벽 그리기
-	for (int i = 0; i < WALL_COUNT; ++i) {
-		walls[i].Draw(ShaderProgram, VBO, EBO);
-	}
+	//for (int i = 0; i < WALL_COUNT; ++i) {
+	//	walls[i].Draw(ShaderProgram, VBO, EBO);
+	//}
 
 
 	draw_thorns(ShaderProgram, ConVBO, ConEBO, trapPoint[1]);
