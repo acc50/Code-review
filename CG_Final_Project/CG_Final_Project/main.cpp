@@ -1,13 +1,3 @@
-#include <gl/glew.h>
-#include <gl/freeglut.h>
-#include <gl/freeglut_ext.h>
-#include <gl/glm.hpp>
-#include <gl/ext.hpp>
-#include <gl/gtc/matrix_transform.hpp>
-#include <iostream>
-#include <Windows.h>
-#include <vector>
-#include "file2buf.h"
 #include "InitApp.h"
 
 #pragma comment(lib, "glew32.lib")
@@ -41,6 +31,8 @@ void main(int argc, char** argv)
 	glEnable(GL_CULL_FACE);
 	CreateCon(ConEBO, ConVBO);
 	CreateCube(ShaderProgram,EBO, VBO);
+
+	init_wall();				// º® ÁÂÇ¥ ¼³Á¤
 
 	InitProgram(ShaderProgram);
 	glutDisplayFunc(drawScene);

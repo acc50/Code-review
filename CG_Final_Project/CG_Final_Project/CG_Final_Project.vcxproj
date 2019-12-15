@@ -143,12 +143,14 @@
     <ClCompile Include="InitApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file2buf.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="InitApp.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fragment.glsl" />
