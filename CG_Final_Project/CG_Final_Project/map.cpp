@@ -4,9 +4,9 @@
 #define TRAP_COUNT 9
 Wall walls[WALL_COUNT];
 TrapPoint trapPoint[TRAP_COUNT] = {
-	{-2.5f,-5.0f},{0.0f,-4.0f},{2.0f,-5.0f},
-	{-2.5f,0.0f},{2.0f,0.0f},{-3.85f,2.0f},
-	{-2.0f,3.0f},{1.5f,3.0f},{3.5f,2.0f}
+	{-2.5f,-4.5f},{-0.3f,-3.7f},{2.0f,-4.5f},
+	{-2.5f,0.0f},{2.0f,0.3f},{-3.5f,2.0f},
+	{-1.5f,3.0f},{1.5f,3.0f},{3.5f,2.0f}
 
 };
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
@@ -40,6 +40,9 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+
+	glDisableVertexAttribArray(pos_id);
+	glDisableVertexAttribArray(frag_id);
 }
 
 void draw_wall(GLuint ShaderProgram, GLuint VBO, GLuint EBO, float x, float z, float width, float width2)
@@ -74,6 +77,8 @@ void draw_wall(GLuint ShaderProgram, GLuint VBO, GLuint EBO, float x, float z, f
 	glEnableVertexAttribArray(frag_id);
 	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glDisableVertexAttribArray(pos_id);
+	glDisableVertexAttribArray(frag_id);
 }
 
 void init_wall()				// 좌표 정의는 한번만 여기서 해줌
@@ -188,12 +193,24 @@ void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO, GLuint ConVBO, GLuin
 	}
 
 	// 벽 그리기
-	/*for (int i = 0; i < WALL_COUNT; ++i) {
+	for (int i = 0; i < WALL_COUNT; ++i) {
 		walls[i].Draw(ShaderProgram, VBO, EBO);
-	}*/
+	}
 
-	for (int i = 0; i < TRAP_COUNT; i++)
-		draw_thorns(ShaderProgram, ConVBO, ConEBO, trapPoint[i]);
+
+	draw_thorns(ShaderProgram, ConVBO, ConEBO, trapPoint[1]);
+	draw_thorns(ShaderProgram, ConVBO, ConEBO, trapPoint[3]);
+	draw_thorns(ShaderProgram, ConVBO, ConEBO, trapPoint[4]);
+
+	draw_hole(ShaderProgram, VBO, EBO, trapPoint[0]);
+	draw_hole(ShaderProgram, VBO, EBO, trapPoint[5]);
+	draw_hole(ShaderProgram, VBO, EBO, trapPoint[8]);
+
+	draw_slow(ShaderProgram, VBO, EBO, trapPoint[2]);
+	draw_slow(ShaderProgram, VBO, EBO, trapPoint[6]);
+	draw_slow(ShaderProgram, VBO, EBO, trapPoint[7]);
+
+
 
 
 
@@ -276,4 +293,78 @@ void draw_thorns(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, TrapPoint i
 	for (float i = 0.0f; i < size*3.0f; i += size)
 		for (float j = 0.0f; j < size*3.0f; j += size)
 			draw_thorn(ShaderProgram, ConVBO, ConEBO, id.x + j, id.z + i);
+}
+
+void draw_hole(GLuint ShaderProgram, GLuint VBO, GLuint EBO, TrapPoint id)
+{
+	glm::mat4 model = glm::mat4(1.0f); //최종
+	glm::mat4 tm = glm::mat4(1.0f);
+	glm::mat4 sm = glm::mat4(1.0f);
+	glm::mat4 rm = glm::mat4(1.0f); //회전
+
+	tm = glm::translate(tm, glm::vec3(id.x, 0.0f, id.z));
+	sm = glm::scale(sm, glm::vec3(0.5f, 0.3f, 0.5f));
+
+	model = tm * rm * sm *model;
+	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	glUniform3f(colorLocation, 0.0f, 0.0f, 0.0f);
+
+	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
+	glEnableVertexAttribArray(pos_id);
+	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+
+	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
+	glEnableVertexAttribArray(frag_id);
+	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glDisableVertexAttribArray(pos_id);
+	glDisableVertexAttribArray(frag_id);
+}
+
+void draw_slow(GLuint ShaderProgram, GLuint VBO, GLuint EBO, TrapPoint id)
+{
+	glm::mat4 model = glm::mat4(1.0f); //최종
+	glm::mat4 tm = glm::mat4(1.0f);
+	glm::mat4 sm = glm::mat4(1.0f);
+	glm::mat4 rm = glm::mat4(1.0f); //회전
+
+	tm = glm::translate(tm, glm::vec3(id.x, 0.0f, id.z));
+	sm = glm::scale(sm, glm::vec3(0.5f, 0.3f, 0.5f));
+
+	model = tm * rm * sm *model;
+	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	glUniform3f(colorLocation, 0.0f, 1.0f, 0.0f);
+
+	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
+	glEnableVertexAttribArray(pos_id);
+	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+
+	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
+	glEnableVertexAttribArray(frag_id);
+	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glDisableVertexAttribArray(pos_id);
+	glDisableVertexAttribArray(frag_id);
 }
