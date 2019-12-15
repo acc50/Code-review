@@ -1,6 +1,7 @@
 #pragma once
 #include "global.h"
 #include "map.h"
+
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 bool InitProgram(unsigned int& ShaderProgram);

@@ -145,6 +145,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="Pacman.cpp" />
+    <ClCompile Include="Thorn.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="InitApp.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="Pacman.h" />
+    <ClInclude Include="Thorn.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
