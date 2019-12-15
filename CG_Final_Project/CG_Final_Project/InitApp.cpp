@@ -146,39 +146,33 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, float AtX,float AtY,float angle)
+void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP)
 {
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
-	glm::vec3 cameraPos = glm::vec3(x, y, z);
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 tm = glm::mat4(1.0f);
-	glm::mat4 rm = glm::mat4(1.0f);
-	glm::vec4 at = glm::vec4(x, y, z, 1.0f);
-	tm = glm::translate(tm, glm::vec3(x, y, z));
-	rm = glm::rotate(tm, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = tm;
-	tm = glm::translate(model, glm::vec3(x, 0.0f, 0.0f));
-	at = rm * tm * at;
-	glm::vec3 cameraDirection = glm::vec3(AtX+x,0.0f, at.z);
+
 	switch (viewPoint)
 	{
+
 	case E_DEFAULT_VIEW:
 
 		break;
+
 	case E_TOP_VIEW:
-		cameraPos = glm::vec3(0.0f, 20.0f, 0.01f); //왜 z가 0이면 안보이지?
-		cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		EYE = glm::vec3(0.0f, 20.0f, 0.01f); //왜 z가 0이면 안보이지?
+		AT = glm::vec3(0.0f, 0.0f, 0.0f);
 		break;
+
 	default:
 		break;
 
 	}
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::lookAt(cameraPos, cameraDirection, cameraUp);
+	view = glm::lookAt(EYE, AT, UP);
+
 	unsigned int viewLocation = glGetUniformLocation(ShaderProgram, "viewTransform");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 }
+
 void Myprojection(GLuint ShaderProgram, EViewPoint viewPoint) {
 	glm::mat4 projection = glm::mat4(1.0f);
 	switch (viewPoint)
