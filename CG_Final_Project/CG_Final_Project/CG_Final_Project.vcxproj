@@ -141,7 +141,6 @@
   <ItemGroup>
     <ClCompile Include="file2buf.cpp" />
     <ClCompile Include="InitApp.cpp" />
-    <ClCompile Include="loadObj.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="Wall.cpp" />
