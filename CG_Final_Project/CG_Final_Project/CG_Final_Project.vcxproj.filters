@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\Character">
-      <UniqueIdentifier>{5ffa7978-4e7f-4fa0-b97b-c90f9382916d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Character">
-      <UniqueIdentifier>{3308ea88-2fb4-4f5f-93b9-3df8eeb2c3ef}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file2buf.cpp">
@@ -36,13 +30,8 @@
     <ClCompile Include="Wall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-
     <ClCompile Include="loadObj.cpp">
       <Filter>헤더 파일</Filter>
-
-    <ClCompile Include="Pacman.cpp">
-      <Filter>소스 파일\Character</Filter>
-
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,9 +49,6 @@
     </ClInclude>
     <ClInclude Include="Wall.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Pacman.h">
-      <Filter>헤더 파일\Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

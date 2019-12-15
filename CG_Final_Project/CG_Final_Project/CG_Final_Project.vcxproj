@@ -144,7 +144,6 @@
     <ClCompile Include="loadObj.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
-    <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +151,6 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="InitApp.h" />
     <ClInclude Include="map.h" />
-    <ClInclude Include="Pacman.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
