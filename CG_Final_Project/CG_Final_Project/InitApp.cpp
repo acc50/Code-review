@@ -146,39 +146,31 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, float AtX,float AtY,float angle)
+void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP, glm::vec3 T_EYE, glm::vec3 T_AT)
 {
-	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
-	glm::vec3 cameraPos = glm::vec3(x, y, z);
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 tm = glm::mat4(1.0f);
-	glm::mat4 rm = glm::mat4(1.0f);
-	glm::vec4 at = glm::vec4(x, y, z, 1.0f);
-	tm = glm::translate(tm, glm::vec3(x, y, z));
-	rm = glm::rotate(tm, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = tm;
-	tm = glm::translate(model, glm::vec3(x, 0.0f, 0.0f));
-	at = rm * tm * at;
-	glm::vec3 cameraDirection = glm::vec3(AtX+x,0.0f,-10.0f);
+
+	glm::mat4 view = glm::mat4(1.0f);
+
 	switch (viewPoint)
 	{
-	case E_DEFAULT_VIEW:
 
+	case E_DEFAULT_VIEW:
+		view = glm::lookAt(EYE, AT, UP);		// 디폴트 뷰 일때의 view 
 		break;
+
 	case E_TOP_VIEW:
-		cameraPos = glm::vec3(0.0f, 20.0f, 0.01f); //왜 z가 0이면 안보이지?
-		cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		view = glm::lookAt(T_EYE, T_AT, UP);		// 탑 뷰 일때의 view
 		break;
+
 	default:
 		break;
 
 	}
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::lookAt(cameraPos, cameraDirection, cameraUp);
+
 	unsigned int viewLocation = glGetUniformLocation(ShaderProgram, "viewTransform");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 }
+
 void Myprojection(GLuint ShaderProgram, EViewPoint viewPoint) {
 	glm::mat4 projection = glm::mat4(1.0f);
 	switch (viewPoint)
@@ -266,53 +258,3 @@ GLvoid drawCon(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)
 }
 
 
-void CreateSphere(GLuint& VBO, GLuint& NVBO)
-{
-	std::vector< glm::vec3 > outvertex, outnormal;
-	std::vector< glm::vec2 > outuv;
-	loadObj("sphere.obj", outvertex, outnormal, outuv);
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, outvertex.size() * sizeof(glm::vec3), &outvertex[0], GL_STATIC_DRAW);
-
-
-	glGenBuffers(1, &NVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, NVBO);
-	glBufferData(GL_ARRAY_BUFFER, outnormal.size() * sizeof(glm::vec3), &outnormal[0], GL_STATIC_DRAW);
-
-	std::cout << outvertex.size() << std::endl;
-}
-
-void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float z)
-{
-	float size = 1.0f / 80.0f;
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 tm = glm::mat4(1.0f);
-	glm::mat4 sm = glm::mat4(1.0f);
-	sm = glm::scale(sm, glm::vec3(size, size, size));
-	tm = glm::translate(tm, glm::vec3(x, 0.35f, z));
-	model = tm*sm * model;
-	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-
-	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(objColorLocation, 1.0, 1.0f, 0.0f);
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
-	int light_id = glGetAttribLocation(ShaderProgram, "vPos");
-	glEnableVertexAttribArray(light_id);
-	glVertexAttribPointer(light_id, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	//glBindBuffer(GL_ARRAY_BUFFER, SNVBO);
-
-	//int normal_id = glGetAttribLocation(ShaderProgram, "vNormal");  //노말
-	//
-	//glEnableVertexAttribArray(normal_id);
-	//glVertexAttribPointer(normal_id, 3, GL_FLOAT, GL_FALSE, 0, 0);//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
-
-	glDrawArrays(GL_TRIANGLES, 0, 2880);
-
-	glDisableVertexAttribArray(light_id);
-	//glDisableVertexAttribArray(normal_id);
-}
