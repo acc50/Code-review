@@ -146,13 +146,20 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, float AtX,float AtY)
+void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, float AtX,float AtY,float angle)
 {
 	//glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 10.0f);
 	glm::vec3 cameraPos = glm::vec3(x, y, z);
-	glm::mat4 abc = glm::mat4(1.0f);
-
-	glm::vec3 cameraDirection = glm::vec3(AtX, AtY, AtX*AtY);
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 tm = glm::mat4(1.0f);
+	glm::mat4 rm = glm::mat4(1.0f);
+	glm::vec4 at = glm::vec4(x, y, z, 1.0f);
+	tm = glm::translate(tm, glm::vec3(x, y, z));
+	rm = glm::rotate(tm, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = tm;
+	tm = glm::translate(model, glm::vec3(x, 0.0f, 0.0f));
+	at = rm * tm * at;
+	glm::vec3 cameraDirection = glm::vec3(AtX+x,0.0f, at.z);
 	switch (viewPoint)
 	{
 	case E_DEFAULT_VIEW:
@@ -166,7 +173,6 @@ void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, flo
 		break;
 
 	}
-	
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::lookAt(cameraPos, cameraDirection, cameraUp);
