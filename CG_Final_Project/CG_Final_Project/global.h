@@ -10,6 +10,8 @@
 #include <cmath>
 #include "file2buf.h"
 
+
+extern float thronTime;
 enum EViewPoint
 {
 	

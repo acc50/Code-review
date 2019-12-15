@@ -15,6 +15,8 @@ float dx = 1.0f;
 float dy = 1.0f;
 float AtX = 0.0f, AtY = 0.0f, angleZ = 0.0f;
 EViewPoint view_point = E_DEFAULT_VIEW;
+float thronTime=0.0f;
+
 void Mouse(int x, int y);
 void Timer(int a);
 void InputKey(unsigned char key, int x, int y);
@@ -50,14 +52,16 @@ void main(int argc, char** argv)
 void Timer(int a)
 {
 
-
+	if (thronTime > 0.6f)
+		thronTime = -1.0f;
+	thronTime += 0.1f;
 	glutPostRedisplay();
-	glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(100, Timer, 1);
 }
 GLvoid drawScene()
 {
 	//
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -66,7 +70,7 @@ GLvoid drawScene()
 	view(ShaderProgram, view_point, cameraX, cameraY, cameraZ, AtX, AtY, angleZ);
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, VBO, EBO);
+	draw_map(ShaderProgram, VBO, EBO,ConVBO,ConEBO);
 
 	//임시 플레이어 위치
 	draw_wall(ShaderProgram, VBO, EBO, cameraX, cameraZ, 0.5f, 0.5f);

@@ -159,7 +159,7 @@ void view(GLuint ShaderProgram,EViewPoint viewPoint,float x,float y,float z, flo
 	model = tm;
 	tm = glm::translate(model, glm::vec3(x, 0.0f, 0.0f));
 	at = rm * tm * at;
-	glm::vec3 cameraDirection = glm::vec3(AtX+x,0.0f, at.z);
+	glm::vec3 cameraDirection = glm::vec3(AtX+x,0.0f,-10.0f);
 	switch (viewPoint)
 	{
 	case E_DEFAULT_VIEW:
