@@ -14,15 +14,18 @@ GLuint EBO;
 float dx = 1.0f;
 float dy = 1.0f;
 
-glm::vec3 EYE = glm::vec3(0.0f, 20.0f, 0.01f);
-glm::vec3 AT = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 EYE = glm::vec3(0.0f, 1.0f, 0.5f);
+glm::vec3 AT = glm::vec3(-1.0f, 1.0f, 0.5f);
 glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f);
+
+glm::vec3 T_EYE = glm::vec3(0.0f, 20.0f, 0.01f);		// 탑뷰기준 카메라 EYE
+glm::vec3 T_AT = glm::vec3(0.0f, 0.0f, 0.0f);		// 탑뷰기준 카메라 AT
 
 bool Left = false, Right = false, Up = false, Down = false;		// 키 입력
 bool move = false;
 Pacman *pacman = new Pacman;
 
-EViewPoint view_point = E_TOP_VIEW;
+EViewPoint view_point = E_DEFAULT_VIEW;
 void Mouse(int x, int y);
 void Timer(int a);
 void InputKey(unsigned char key, int x, int y);
@@ -62,7 +65,9 @@ void main(int argc, char** argv)
 void Timer(int a)
 {
 	if (move) {
-		pacman->Move(Up, Down, Right, Left, EYE, AT);
+		pacman->Move(Up, Down, Right, Left, EYE, AT, UP);
+
+
 	}
 
 
@@ -83,7 +88,7 @@ GLvoid drawScene()
 	glUseProgram(ShaderProgram);
 
 
-	view(ShaderProgram, view_point, EYE, AT, UP);	// 카메라
+	view(ShaderProgram, view_point, EYE, AT, UP, T_EYE, T_AT);	// 카메라 
 
 	Myprojection(ShaderProgram, view_point);
 
@@ -97,24 +102,6 @@ GLvoid drawScene()
 
 
 	float r = 3.0f;
-
-
-	// --------------------------- 임시 AT ---------------------------------
-
-	//glm::mat4 model = glm::mat4(1.0f);
-	//glm::mat4 tm = glm::mat4(1.0f);
-	//glm::mat4 rm = glm::mat4(1.0f);
-	//glm::vec4 at=glm::vec4(cameraX, cameraY, cameraZ, 1.0f);
-
-	//tm = glm::translate(tm, glm::vec3(cameraX, cameraY, cameraZ));
-	//rm = glm::rotate(tm,glm::radians(angleZ), glm::vec3(0.0f, 1.0f, 0.0f));
-	//tm = glm::translate(model, glm::vec3(cameraX, 0.0f, 0.0f));
-	//at = rm*tm * at;
-
-	//임시 카메라가 보는점 위치 (at)
-	//draw_At(ShaderProgram, VBO, EBO,at.x, at.z, 0.5f, 0.5f);
-
-	// --------------------------- 임시 AT ---------------------------------
 
 
 	glutSwapBuffers();

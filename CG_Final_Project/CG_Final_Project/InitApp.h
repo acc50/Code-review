@@ -12,5 +12,5 @@ void CreateCube(GLuint ShaderProgram, GLuint& EBO, GLuint& VBO);
 void CreateCon(GLuint& EBO, GLuint& VBO);
 GLvoid draw_cube(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 GLvoid drawCon(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO);
-void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP);
+void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP, glm::vec3 T_EYE, glm::vec3 T_AT);
 void Myprojection(GLuint ShaderProgra, EViewPoint viewPoint);

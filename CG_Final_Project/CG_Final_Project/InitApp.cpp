@@ -146,28 +146,26 @@ void CreateAxis(GLuint& Axis)
 
 
 
-void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP)
+void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP, glm::vec3 T_EYE, glm::vec3 T_AT)
 {
+
+	glm::mat4 view = glm::mat4(1.0f);
 
 	switch (viewPoint)
 	{
 
 	case E_DEFAULT_VIEW:
-
+		view = glm::lookAt(EYE, AT, UP);		// 디폴트 뷰 일때의 view 
 		break;
 
 	case E_TOP_VIEW:
-		EYE = glm::vec3(0.0f, 20.0f, 0.01f); //왜 z가 0이면 안보이지?
-		AT = glm::vec3(0.0f, 0.0f, 0.0f);
+		view = glm::lookAt(T_EYE, T_AT, UP);		// 탑 뷰 일때의 view
 		break;
 
 	default:
 		break;
 
 	}
-
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::lookAt(EYE, AT, UP);
 
 	unsigned int viewLocation = glGetUniformLocation(ShaderProgram, "viewTransform");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);

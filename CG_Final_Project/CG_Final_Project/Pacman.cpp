@@ -4,11 +4,13 @@
 
 Pacman::Pacman()
 {
+
 }
 
 
 Pacman::~Pacman()
 {
+
 }
 
 void Pacman::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
@@ -20,6 +22,7 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 
 	tm = glm::translate(tm, glm::vec3(this->Pos.x, 1.0f, this->Pos.z));
 
+	model = glm::scale(model, glm::vec3(0.7f, 0.7f, 0.7f));
 
 	model = tm * rm * model;
 
@@ -46,27 +49,44 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
-void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 EYE, glm::vec3 AT)
+void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 {
-	// 임시로 x,z 위치를 이동
-
 	// 원래는 EYE 와 AT 기준으로 이동해야함
 
+	GLfloat step = 20;
+
+	glm::vec3 front_dir = AT - EYE;		// EYE 기준 AT 으로 가는 방향 벡터
+	front_dir = front_dir / (sqrt(front_dir.x * front_dir.x + front_dir.y * front_dir.y + front_dir.z * front_dir.z));
+	glm::vec3 back_dir = glm::vec3(-front_dir.x, -front_dir.y, -front_dir.z);
+
+	glm::vec3 left_dir = glm::vec3(1.0f);		// UP X front_dir  외적
+	left_dir.x = UP.y * front_dir.z - UP.z * front_dir.y;
+	left_dir.y = UP.z * front_dir.x - UP.x * front_dir.z;
+	left_dir.z = UP.x * front_dir.y - UP.y * front_dir.x;
+
+	glm::vec3 right_dir = glm::vec3(-left_dir.x, -left_dir.y, -left_dir.z);
+
 	if (Up) {
-		this->Pos.z -= 0.1f;
+		EYE += front_dir / step;
+		AT += front_dir / step;
 	}
 
 	if (Down) {
-		this->Pos.z += 0.1f;
+		EYE += back_dir / step;
+		AT += back_dir / step;
 	}
 
 	if (Left) {
-		this->Pos.x -= 0.1f;
+		EYE += left_dir / step;
+		AT += left_dir / step;
 	}
 
 	if (Right) {
-		this->Pos.x += 0.1f;
+		EYE += right_dir / step;
+		AT += right_dir / step;
 	}
+
+	this->Pos = EYE;
 }
 
 glm::vec3 Pacman::Get_Pos()

@@ -12,7 +12,7 @@ public:
 	~Pacman();
 
 	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
-	void Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 EYE, glm::vec3 AT);
+	void Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP);
 
 	glm::vec3 Get_Pos();
 };
