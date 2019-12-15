@@ -14,3 +14,6 @@ GLvoid draw_cube(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 GLvoid drawCon(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO);
 void view(GLuint ShaderProgram, EViewPoint viewPoint, glm::vec3 EYE, glm::vec3 AT, glm::vec3 UP, glm::vec3 T_EYE, glm::vec3 T_AT);
 void Myprojection(GLuint ShaderProgra, EViewPoint viewPoint);
+int loadObj(const char* filename, std::vector< glm::vec3 >& outvertex, std::vector< glm::vec3 >& outnormal, std::vector< glm::vec2 >& outuv);
+void CreateSphere(GLuint& VBO, GLuint& NVBO);
+void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float z);
