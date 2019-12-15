@@ -13,7 +13,6 @@ GLuint EBO;
 
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
-GLfloat yaw = 0.0f, pitch = 0.0f;		// ¿ÀÀÏ·¯ °¢
 GLfloat tempx = 0.0f, tempy = 0.0f;		// ÀÌÀüÀÇ ¸¶¿ì½º °ª
 
 glm::vec3 EYE = glm::vec3(0.0f, 1.0f, 0.5f);
@@ -35,9 +34,12 @@ float thronTime=0.0f;
 
 void Mouse(int button, int state, int x, int y);
 void MouseMotion(int x, int y);
+<<<<<<< HEAD
 void PassiveMouse(int x, int y);
 
 void Mouse(int x, int y);
+=======
+>>>>>>> parent of 7e56ed6... ì¹´ë©”ë¼ êµ¬í˜„
 void Timer(int a);
 void InputKey(unsigned char key, int x, int y);
 void main(int argc, char** argv)
@@ -67,8 +69,11 @@ void main(int argc, char** argv)
 	glutKeyboardUpFunc(KeyUP);			// Å°º¸µå ¶¼´Â °Í
 	glutMouseFunc(Mouse);				// ¸¶¿ì½º Å¬¸¯
 	glutMotionFunc(MouseMotion);
+<<<<<<< HEAD
 	glutPassiveMotionFunc(PassiveMouse);
 
+=======
+>>>>>>> parent of 7e56ed6... ì¹´ë©”ë¼ êµ¬í˜„
 	glutTimerFunc(10, Timer, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
@@ -169,42 +174,36 @@ void Mouse(int x, int y)
 
 
 		// ÇöÀç ÇÁ·¹ÀÓ°ú ÀÌÀüÇÁ·¹ÀÓÀÇ ¸¶¿ì½º ÁÂÇ¥ Â÷ÀÌ
-		xAngle = (my - tempy) * 100;				// À§¾Æ·¡ ÀÌµ¿ ½Ã xÃà ±âÁØ È¸Àü		µÚÀÇ ¼ıÀÚ´Â ¹èÀ²
-		yAngle = (mx - tempx) * 100;				// ÁÂ¿ì ÀÌµ¿½Ã yÃà ±âÁØ È¸Àü
-
-		yaw += yAngle;
-		pitch += xAngle;
-
-		if (pitch > 89.0f)
-			pitch = 89.0f;
-		if (pitch < -89.0f)
-			pitch = -89.0f;
+		xAngle += (my - tempy) * 3.6;				// À§¾Æ·¡ ÀÌµ¿ ½Ã xÃà ±âÁØ È¸Àü		µÚÀÇ ¼ıÀÚ´Â ¹èÀ²
+		yAngle += (mx - tempx) / 2.0;				// ÁÂ¿ì ÀÌµ¿½Ã yÃà ±âÁØ È¸Àü
 
 
-		AT.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		AT.y = sin(glm::radians(pitch));
-		AT.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		std::cout << mx << " " << my << " " << tempx << " " << tempy << std::endl;
+
+
+
+		glm::mat4 r = glm::mat4(1.0f);		// È¸Àü
+
+		r = glm::rotate(r, glm::radians(1.0f), glm::vec3(xAngle, yAngle, 0.0f));
+
+		glm::mat3 rm = glm::mat3(r);		// À§ÀÇ È¸ÀüÇà·Ä¿¡¼­ 3x3 ºÎºĞ¸¸ µû¿È
+
 
 		// AT ÀÇ EYE ±âÁØ È¸Àü
 		AT = AT - EYE;		// EYE¸¦ ¿øÁ¡ÀÌµ¿
-
-		AT.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		AT.y = sin(glm::radians(pitch));
-		AT.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
+		AT = AT * rm;		// ATÀ» È¸Àü
 		AT = AT + EYE;		// ÀÌµ¿Çß´ø ¸¸Å­ ´Ù½Ã ¿ªÀÌµ¿
+
+		AT.y += xAngle;
+
+		xAngle = 0.0f;
+		yAngle = 0.0f;
 
 		tempx = mx;
 		tempy = my;
 
 		glutPostRedisplay();
 
-}
-
-void PassiveMouse(int x, int y)
-{
-	Set_Cursor();
-	glutPostRedisplay();
 }
 
 bool check_move()		// ÀÌµ¿Å°°¡ ´­·ÁÀÖÀ¸¸é true, ¾Æ´Ï¸é false
@@ -217,10 +216,17 @@ bool check_move()		// ÀÌµ¿Å°°¡ ´­·ÁÀÖÀ¸¸é true, ¾Æ´Ï¸é false
 
 void Set_Cursor()
 {
+	int width = WINDOW_WIDTH / 2;
+	int height = WINDOW_HEIGHT / 2;
+
 	int x = WINDOW_WIDTH / 2 + WINDOW_POSITION + 11;
 	int y = WINDOW_HEIGHT / 2 + WINDOW_POSITION + 31;
 
 	SetCursorPos(x, y);		// ½ÃÀÛ ¸¶¿ì½º Ä¿¼­ À§Ä¡ ¼³Á¤
+
+
+	//tempx = (GLfloat)(x - width) / width;			// ½ÃÀÛ ¸¶¿ì½º À§Ä¡ÀÇ openGL xÁÂÇ¥¸¦ ¹ŞÀ½
+	//tempy = (GLfloat)(height - y) / height;		// ½ÃÀÛ ¸¶¿ì½º À§Ä¡ÀÇ openGL yÁÂÇ¥¸¦ ¹ŞÀ½
 
 	tempx = 0.0f;
 	tempy = 0.0f;
