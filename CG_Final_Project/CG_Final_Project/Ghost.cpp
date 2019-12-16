@@ -74,52 +74,166 @@ void Ghost::Move()
 		second_Patrol();
 	}
 
-}
-
-void Ghost::first_Patrol()
-{
-	int next_point = (cur_point + 1) % 36;
-
-	glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
-
-	next.x = patrolPoint[next_point].x - patrolPoint[cur_point].x;		// x 방향벡터
-	next.z = patrolPoint[next_point].z - patrolPoint[cur_point].z;		// z 방향벡터
-
-	//정규화
-	next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
-	next.x /= speed;
-	next.z /= speed;
-
-	this->Pos.x += next.x;
-	this->Pos.z += next.z;
-
-	if (fabsf(Pos.x - patrolPoint[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
-	{
-		cur_point = (cur_point + 1) % 36;
+	else if (patrol_type == 3) {
+		third_Patrol();
 	}
 
 }
 
+void Ghost::first_Patrol()
+{
+	if(!is_starting_point){
+		int next_point = (cur_point + 1) % 8;
+
+		glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		next.x = startingPoint[next_point].x - startingPoint[cur_point].x;		// x 방향벡터
+		next.z = startingPoint[next_point].z - startingPoint[cur_point].z;		// z 방향벡터
+
+		//정규화
+		next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+		next.x /= speed;
+		next.z /= speed;
+
+		this->Pos.x += next.x;
+		this->Pos.z += next.z;
+
+		if (fabsf(Pos.x - startingPoint[next_point].x) <= 0.001f && fabsf(Pos.z - startingPoint[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+		{
+			cur_point += 1;
+
+			if (cur_point == 7) {
+				is_starting_point = true;
+				cur_point = 0;
+			}
+		}
+
+	}
+
+	else {
+		int next_point = (cur_point + 1) % 36;
+
+		glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		next.x = patrolPoint[next_point].x - patrolPoint[cur_point].x;		// x 방향벡터
+		next.z = patrolPoint[next_point].z - patrolPoint[cur_point].z;		// z 방향벡터
+
+		//정규화
+		next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+		next.x /= speed;
+		next.z /= speed;
+
+		this->Pos.x += next.x;
+		this->Pos.z += next.z;
+
+		if (fabsf(Pos.x - patrolPoint[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+		{
+			cur_point = (cur_point + 1) % 36;
+		}
+	}
+}
+
 void Ghost::second_Patrol()
 {
-	int next_point = (cur_point + 1) % 24;
+	if (!is_starting_point) {
+		int next_point = (cur_point + 1) % 3;
 
-	glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	next.x = patrolPoint2[next_point].x - patrolPoint2[cur_point].x;		// x 방향벡터
-	next.z = patrolPoint2[next_point].z - patrolPoint2[cur_point].z;		// z 방향벡터
+		next.x = startingPoint2[next_point].x - startingPoint2[cur_point].x;		// x 방향벡터
+		next.z = startingPoint2[next_point].z - startingPoint2[cur_point].z;		// z 방향벡터
 
-	//정규화
-	next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
-	next.x /= speed;
-	next.z /= speed;
+		//정규화
+		next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+		next.x /= speed;
+		next.z /= speed;
 
-	this->Pos.x += next.x;
-	this->Pos.z += next.z;
+		this->Pos.x += next.x;
+		this->Pos.z += next.z;
 
-	if (fabsf(Pos.x - patrolPoint2[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint2[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
-	{
-		cur_point = (cur_point + 1) % 24;
+		if (fabsf(Pos.x - startingPoint2[next_point].x) <= 0.001f && fabsf(Pos.z - startingPoint2[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+		{
+			cur_point += 1;
+
+			if (cur_point == 2) {
+				is_starting_point = true;
+				cur_point = 5;
+			}
+		}
+	}
+
+	else {
+		int next_point = (cur_point + 1) % 24;
+
+		glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		next.x = patrolPoint2[next_point].x - patrolPoint2[cur_point].x;		// x 방향벡터
+		next.z = patrolPoint2[next_point].z - patrolPoint2[cur_point].z;		// z 방향벡터
+
+		//정규화
+		next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+		next.x /= speed;
+		next.z /= speed;
+
+		this->Pos.x += next.x;
+		this->Pos.z += next.z;
+
+		if (fabsf(Pos.x - patrolPoint2[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint2[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+		{
+			cur_point = (cur_point + 1) % 24;
+		}
+	}
+}
+
+void Ghost::third_Patrol()
+{
+	if (!is_starting_point) {
+		int next_point = (cur_point + 1) % 4;
+
+		glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		next.x = startingPoint3[next_point].x - startingPoint3[cur_point].x;		// x 방향벡터
+		next.z = startingPoint3[next_point].z - startingPoint3[cur_point].z;		// z 방향벡터
+
+		//정규화
+		next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+		next.x /= speed;
+		next.z /= speed;
+
+		this->Pos.x += next.x;
+		this->Pos.z += next.z;
+
+		if (fabsf(Pos.x - startingPoint3[next_point].x) <= 0.001f && fabsf(Pos.z - startingPoint3[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+		{
+			cur_point += 1;
+
+			if (cur_point == 3) {
+				is_starting_point = true;
+				cur_point = 27;
+			}
+		}
+	}
+
+	else {
+		int next_point = (cur_point + 1) % 46;
+
+		glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		next.x = patrolPoint3[next_point].x - patrolPoint3[cur_point].x;		// x 방향벡터
+		next.z = patrolPoint3[next_point].z - patrolPoint3[cur_point].z;		// z 방향벡터
+
+		//정규화
+		next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+		next.x /= speed;
+		next.z /= speed;
+
+		this->Pos.x += next.x;
+		this->Pos.z += next.z;
+
+		if (fabsf(Pos.x - patrolPoint3[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint3[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+		{
+			cur_point = (cur_point + 1) % 46;
+		}
 	}
 }
 

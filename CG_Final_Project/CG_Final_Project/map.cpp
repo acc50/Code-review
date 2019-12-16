@@ -163,15 +163,11 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	walls[41].Set_Wall(5.0f, 0.0f, default_width2, 10.0f);
 
 	GLfloat gx = -0.5f;
+	int type = 1;
 	for (int i = 0; i < GHOST_COUNT; ++i) {
-		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre), 1);
+		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre), type++);
 		gx += 0.5f;
 	}
-
-	ghosts[0].Init(-4.5f, -4.5f, color(dre), color(dre), color(dre), 1);
-	ghosts[1].Init(-0.5f, -3.5f, color(dre), color(dre), color(dre), 2);
-
-	// --------------- 함정 랜덤 생성 -------------
 
 
 
