@@ -309,6 +309,7 @@ void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float
 	//glDisableVertexAttribArray(normal_id);
 }
 
+
 bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GLfloat width, GLfloat depth)
 {
 	
@@ -327,3 +328,33 @@ bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GL
 
 	return false;
 }
+
+
+void renderBitmapCharacter(void *font,int lifeCount,int itemCount)
+{
+	const char* life = "life:";
+	const char* remainjewel = "remain Jewel:";
+	const char *c;
+	char a[10];
+	glRasterPos3f(-0.8, 0.9, 0.0f);//life id
+	for (c = life; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *c);
+	}
+	itoa(lifeCount, a, 10);
+	for (c = a; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *a);
+	}
+	glRasterPos3f(0.6, 0.9, 0.0f);//life id
+	for (c = remainjewel; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *c);
+	}
+	itoa(itemCount, a, 10);
+	for (c = a; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *a);
+	}
+}
+

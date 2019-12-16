@@ -21,5 +21,9 @@ void Myprojection(GLuint ShaderProgra, EViewPoint viewPoint);
 int loadObj(const char* filename, std::vector< glm::vec3 >& outvertex, std::vector< glm::vec3 >& outnormal, std::vector< glm::vec2 >& outuv);
 void CreateSphere(GLuint& VBO, GLuint& NVBO);
 
+
 // 구의 x, z, 반지름,  벽의 x, z, 가로길이, 세로길이를 받아 충돌체크
 bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GLfloat width, GLfloat depth);
+
+void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float z);
+void renderBitmapCharacter(void *font, int lifeCount, int itemCount);

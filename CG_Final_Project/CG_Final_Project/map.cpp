@@ -9,6 +9,15 @@ TrapPoint trapPoint[TRAP_COUNT * 3] = {
 
 };
 
+TrapPoint itemPoint[ITEM_COUNT] = {
+	{-4.5f,-4.5f},{-3.5,-2.5},{-1.5f,-3.5},{-4.5,-2.5},//2분면
+	{1.5f,-4.5f},{4.5f,-4.5f},{2.5f,-2.5f},{3.5f,-1.5f},//1분면
+	{-4.5f,0.5f},{-0.5f,1.5f},{-2.5f,2.5f},{-4.5f,4.5f},
+	{3.5f,1.5f},{2.5f,3.5f},{0.5f,3.5f},{4.5f,4.5f}
+
+
+};
+
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
 	glm::mat4 model = glm::mat4(1.0f); //최종
@@ -158,9 +167,9 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 
 }
 
-void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO, GLuint ConVBO, GLuint ConEBO, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])
+void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])
 {
-	draw_floor(ShaderProgram, VBO, EBO);
+	draw_floor(ShaderProgram, super.VBO, super.EBO);
 
 	// 좌표점찍기
 	/*for (float i = -5.0f; i <= 5.0f; i += 1.0f) {
@@ -170,16 +179,60 @@ void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO, GLuint ConVBO, GLuin
 
 	// 벽 그리기
 	for (int i = 0; i < WALL_COUNT; ++i) {
-		walls[i].Draw(ShaderProgram, VBO, EBO);
+		walls[i].Draw(ShaderProgram, super.VBO, super.EBO);
 	}
 
 	//좌표줄때 옆으로 두배늘리고 싶으면 x좌표를 2배늘린것의 중간값을 줘야됨
 	//ex   좌표 0~2로가는 길이의 벽만들려면 초기값을 1로하고 가로너비를 2를 준다.
 
 	for (int i = 0; i < TRAP_COUNT; ++i) {
-		thorns[i].Draw(ShaderProgram, ConVBO, ConEBO);
-		holes[i].Draw(ShaderProgram, VBO, EBO);
-		traps[i].Draw(ShaderProgram, VBO, EBO);
+		thorns[i].Draw(ShaderProgram, super.ConVBO, super.ConEBO);
+		holes[i].Draw(ShaderProgram, super.VBO, super.EBO);
+		traps[i].Draw(ShaderProgram, super.VBO, super.EBO);
 	}
 
+	for (int i = 0; i < 4; ++i)
+		draw_WinItem(ShaderProgram, super.SVBO, super.SNVBO, itemPoint[itemID[i]]);
+
+}
+
+
+
+void draw_WinItem(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, TrapPoint p)
+{
+	float size = 1.0f / 80.0f;
+
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 tm = glm::mat4(1.0f);
+	glm::mat4 sm = glm::mat4(1.0f);
+
+	sm = glm::scale(sm, glm::vec3(size, size, size));
+	tm = glm::translate(tm, glm::vec3(p.x, 0.45f, p.z));
+
+
+	model = tm * sm * model;
+
+	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	glUniform3f(objColorLocation, 1.0, 1.0f, 1.0f);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
+	int light_id = glGetAttribLocation(ShaderProgram, "vPos");
+	glEnableVertexAttribArray(light_id);
+	glVertexAttribPointer(light_id, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	//glBindBuffer(GL_ARRAY_BUFFER, SNVBO);
+
+	//int normal_id = glGetAttribLocation(ShaderProgram, "vNormal");  //노말
+	//
+	//glEnableVertexAttribArray(normal_id);
+	//glVertexAttribPointer(normal_id, 3, GL_FLOAT, GL_FALSE, 0, 0);//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
+
+	glDrawArrays(GL_TRIANGLES, 0, 2880);
+
+	glDisableVertexAttribArray(light_id);
+	//glDisableVertexAttribArray(normal_id);
 }

@@ -24,6 +24,7 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 	sm = glm::scale(sm, glm::vec3(size, size, size));
 	tm = glm::translate(tm, glm::vec3(Pos.x, 0.35f, Pos.z));
 
+
 	model = tm * sm * model;
 
 	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");

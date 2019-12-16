@@ -10,12 +10,8 @@
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLuint ShaderProgram;
-GLuint ConVBO;
-GLuint ConEBO;
-GLuint VBO;
-GLuint EBO;
-GLuint SVBO;  //구 정점정보
-GLuint SNVBO; //구 노멀정보
+
+SuperGLuint super;
 
 Wall walls[WALL_COUNT];
 Thorn thorns[TRAP_COUNT];
@@ -27,6 +23,7 @@ Deceleration_Trap deceleration_traps[TRAP_COUNT];
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
 GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
 GLfloat tempx = 0.0f, tempy = 0.0f;		// 이전의 마우스 값
+
 
 glm::vec3 EYE = glm::vec3(0.0f, 1.0f, 0.5f);
 glm::vec3 AT = glm::vec3(1.0f, 1.0f, 0.5f);
@@ -41,6 +38,11 @@ bool click = false;
 bool JUMP = false;
 Pacman *pacman = new Pacman;
 
+//HSJ추가사항
+int itemID[4];  //실제아이템아이디
+int lifeCount = 3;
+int itemCOunt = 4;
+//
 EViewPoint view_point = E_DEFAULT_VIEW;
 
 void Mouse(int button, int state, int x, int y);
@@ -56,8 +58,12 @@ void Set_Cursor();
 
 int main(int argc, char** argv)
 {
+	srand(time(NULL));
+	for (int i = 0; i < 4; ++i) {
+		itemID[i] = rand() % 4 + i * 4;
+	}
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(WINDOW_POSITION, WINDOW_POSITION);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutCreateWindow("Example1");
@@ -69,13 +75,14 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 	glEnable(GL_CULL_FACE);
-	CreateCon(ConEBO, ConVBO);
-	CreateCube(ShaderProgram, EBO, VBO);
-	CreateSphere(SVBO, SNVBO);
+	CreateCon(super.ConEBO, super.ConVBO);
+	CreateCube(ShaderProgram, super.EBO, super.VBO);
+	CreateSphere(super.SVBO, super.SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
 
 	InitProgram(ShaderProgram);
+
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(InputKey);			// 키보드 입력
 	glutKeyboardUpFunc(KeyUP);			// 키보드 떼는 것
@@ -162,12 +169,10 @@ void myTimer(int a)
 
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && holes[i].Get_State()) {		// 충돌검사
 
-
 			// 충돌 시 처리 할 부분 , 충돌은 일어남  구멍 함정의 중앙 근처에 있어야 발동하도록 함
-
-
 		}
 	}
+
 
 
 
@@ -291,7 +296,9 @@ void Timer(int a)
 
 	glutPostRedisplay();
 
+
 	if(move)
+
 		glutTimerFunc(10, Timer, a);
 }
 
@@ -322,7 +329,7 @@ void JumpTimer(int a)
 GLvoid drawScene()
 {
 	//
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -334,14 +341,14 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO, walls, thorns, holes, deceleration_traps);
-	
+	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps);
+
 	//임시 플레이어 위치
-	pacman->Draw(ShaderProgram, SVBO, SNVBO);
+	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
 
-	draw_sphere(ShaderProgram, SVBO, SNVBO, 0.0f, 0.0f);
+	//draw_sphere(ShaderProgram, suSVBO, SNVBO, 0.0f, 0.0f);
 	float r = 3.0f;
-
+	renderBitmapCharacter(GLUT_BITMAP_HELVETICA_18, lifeCount, itemCOunt);
 
 	glutSwapBuffers();
 
@@ -371,7 +378,7 @@ void InputKey(unsigned char key, int x, int y)
 
 	case 'w':
 		Up = true;
-			
+
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
 
@@ -428,7 +435,7 @@ void InputKey(unsigned char key, int x, int y)
 
 void KeyUP(unsigned char key, int x, int y)
 {
-	switch (key){
+	switch (key) {
 	case 'w':
 		Up = false;
 
@@ -558,3 +565,4 @@ void Set_Cursor()
 	tempx = 0.0f;
 	tempy = 0.0f;
 }
+
