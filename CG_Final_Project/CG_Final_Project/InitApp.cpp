@@ -308,3 +308,22 @@ void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float
 	glDisableVertexAttribArray(light_id);
 	//glDisableVertexAttribArray(normal_id);
 }
+
+bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GLfloat width, GLfloat depth)
+{
+	
+	GLfloat left = (rx - width - cr);				//	사각형의 왼쪽 - 구의 반지름
+	GLfloat back = (rz - depth - cr);				//	사각형의 뒷쪽 - 구의 반지름
+	GLfloat front = (rz + depth + cr);				//	사각형의 앞쪽 + 구의 반지름
+	GLfloat right = (rx + width + cr);				//	사각형의 오른쪽 + 구의 반지름
+
+	// 사각형을 구의반지름만큼 확장
+
+
+	// 확장한 사각형 안에 구 원점이 있으면 충돌
+	if ((cx >= left && cx <= right) && (cz <= front && cz >= back)) {
+		return true;
+	}
+
+	return false;
+}

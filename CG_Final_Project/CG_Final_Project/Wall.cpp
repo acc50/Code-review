@@ -17,8 +17,8 @@ void Wall::Set_Wall(GLfloat x, GLfloat z, GLfloat width, GLfloat depth)
 	this->Pos.z = z;
 	this->Pos.y = 1.0;
 
-	this->width = width;
-	this->depth = depth;
+	this->width = width / 2;
+	this->depth = depth / 2;
 }
 
 void Wall::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
@@ -29,7 +29,7 @@ void Wall::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	glm::mat4 rm = glm::mat4(1.0f); //È¸Àü
 
 	tm = glm::translate(tm, glm::vec3(this->Pos.x, 0.0f, this->Pos.z));
-	sm = glm::scale(sm, glm::vec3(this->width, 5.0f, this->depth));
+	sm = glm::scale(sm, glm::vec3(this->width * 2, 5.0f, this->depth * 2));
 
 	model = tm * rm * sm *model;
 	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");

@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <float.h>
 #include "InitApp.h"
 #include "Pacman.h"
 
@@ -22,12 +23,14 @@ Hole holes[TRAP_COUNT];
 Deceleration_Trap deceleration_traps[TRAP_COUNT];
 
 
+int count = 0;
+
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
 GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
 GLfloat tempx = 0.0f, tempy = 0.0f;		// 이전의 마우스 값
 
 glm::vec3 EYE = glm::vec3(0.0f, 1.0f, 0.5f);
-glm::vec3 AT = glm::vec3(-1.0f, 1.0f, 0.5f);
+glm::vec3 AT = glm::vec3(1.0f, 1.0f, 0.5f);
 glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f);
 
 glm::vec3 T_EYE = glm::vec3(0.0f, 20.0f, 0.01f);		// 탑뷰기준 카메라 EYE
@@ -100,36 +103,115 @@ void myTimer(int a)
 
 
 
-	// ------------------------- 충돌체크 부분 -------------------------------------
+	// ------------------------- 함정 충돌체크 부분 -------------------------------------
 
+	// 함정의 좌표를 받을 벡터
+	glm::vec3 t_pos;		
+	glm::vec3 h_pos;
+	glm::vec3 d_pos;
 
-
-
-	// -------------------------- 벽과 플레이어 충돌 -----------------------------------
-	glm::vec3 w_pos;
-
+	// 팩맨의 정보
+	glm::vec3 pacman_pos = pacman->Get_Pos();
+	GLfloat rsize = pacman->Get_Size();
+	
+	// 함정의 좌표, 사이즈를 담을 변수
 	GLfloat x, z;
-	GLfloat pacman_x, pacmax_z;
-
-	for (int i = 0; i < WALL_COUNT; ++i) {
-		w_pos = walls[i].Get_Pos();
-
-		x = w_pos.x;
-		z = w_pos.z;
-
-		if()
+	GLfloat trap_size;
 
 
 
+
+	// ---------------------------------- 가시 함정 ------------------------------------------------
+
+	for (int i = 0; i < TRAP_COUNT; ++i) {
+		t_pos = thorns[i].Get_Pos();
+		trap_size = thorns[i].Get_Size() + 0.1f;
+
+		x = t_pos.x;
+		z = t_pos.z;
+
+		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && thorns[i].Get_State()) {		// 충돌검사
+
+
+			// 충돌 시 처리 할 부분 , 충돌은 일어남
+
+
+		}
+	}
+
+
+	// ---------------------------------- 가시 함정 ------------------------------------------------
+
+
+
+
+	// ---------------------------------- 구멍 함정 ------------------------------------------------
+
+	for (int i = 0; i < TRAP_COUNT; ++i) {
+		h_pos = holes[i].Get_Pos();
+		trap_size = thorns[i].Get_Size();		
+
+		x = h_pos.x;
+		z = h_pos.z;
+
+		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && holes[i].Get_State()) {		// 충돌검사
+
+
+			// 충돌 시 처리 할 부분 , 충돌은 일어남  구멍 함정의 중앙 근처에 있어야 발동하도록 함
+
+
+		}
+	}
+
+
+
+	// ---------------------------------- 구멍 함정 ------------------------------------------------
+
+
+
+
+
+
+
+	// ---------------------------------- 감속 함정 ------------------------------------------------
+
+
+
+	for (int i = 0; i < TRAP_COUNT; ++i) {
+		d_pos = deceleration_traps[i].Get_Pos();
+		trap_size = thorns[i].Get_Size() + 0.15f;
+
+		x = d_pos.x;
+		z = d_pos.z;
+
+		// 초기 속도값이 30.0f
+		// 충돌 && 초기속도값이면 속도를 낮춤
+		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && 			// 충돌검사
+			(fabsf(pacman->Get_Speed() - 30.0f) <= FLT_EPSILON))
+		{
+
+			pacman->Set_Speed(100.0f);		// 속도 값으로 이동거리를 나누기 때문에 속도값이 크면느려짐
+			pacman->slowdown_count = i;		// 몇번 함정에 걸린지를 알려줌
+
+			break;
+		}
+
+		// 충돌 X && 느려진 상태면 속도 되돌림
+		else if (!is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) &&
+			(fabsf(pacman->Get_Speed() - 100.0f) <= FLT_EPSILON) && (i == pacman->slowdown_count))		// 해당 함정에서 빠져나오면 속도 정상화
+		{
+
+			pacman->Set_Speed(30.0f);
+			
+		}
 
 	}
 
-	// -------------------------- 벽과 플레이어 충돌 -----------------------------------
+	// ---------------------------------- 감속 함정 ------------------------------------------------
 
 
 
-
-	// ------------------------- 충돌체크 부분 -------------------------------------
+	// ------------------------- 함정 충돌체크 부분 -------------------------------------
 
 	glutPostRedisplay();
 	glutTimerFunc(100, myTimer, 2);
@@ -139,6 +221,62 @@ void Timer(int a)
 {
 	if (move) {
 		pacman->Move(Up, Down, Right, Left, EYE, AT, UP);
+
+		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
+
+		glm::vec3 w_pos;
+		glm::vec3 pacman_pos = pacman->Get_Pos();
+
+		GLfloat x, z;									// 벽의 x, z값
+		GLfloat width, depth;							// 벽의 가로 세로 길이
+		GLfloat rsize = pacman->Get_Size();				// 팩맨의 반지름
+
+		GLfloat degree = 0.25f;		// 밀어낼때 판단 정도
+
+		for (int i = 0; i < WALL_COUNT; ++i) {
+			w_pos = walls[i].Get_Pos();
+
+			x = w_pos.x;
+			z = w_pos.z;
+
+			width = walls[i].Get_Width();
+			depth = walls[i].Get_Depth();
+
+
+
+			if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, width, depth)) {		// 사각형과 원의 충돌검사
+
+
+				// 충돌 시 밀어내기 
+
+				if (x + width - degree < pacman_pos.x - rsize) {		// 벽의 오른쪽에서 충돌
+
+					pacman->Set_Pos_x(x + width + rsize);		// 벽의 오른쪽 + 반지름으로 x좌표 설정
+				}
+
+				else if (x - width + degree > pacman_pos.x + rsize) {		// 벽의 왼쪽에서 충돌
+
+					pacman->Set_Pos_x(x - width - rsize);		// 벽의 왼쪽 - 반지름으로 x좌표 설정
+				}
+
+				if (z + depth - degree < pacman_pos.z - rsize) {		// 벽의 앞쪽에서 충돌
+
+					pacman->Set_Pos_z(z + depth + rsize);		// 벽의 앞쪽 + 반지름으로 z좌표 설정
+				}
+
+				else if (z - depth + degree > pacman_pos.z + rsize) {		// 벽의 뒷쪽에서 충돌
+
+					pacman->Set_Pos_z(z - depth - rsize);		// 벽의 뒷쪽 - 반지름으로 z좌표 설정
+				}
+
+
+
+
+			}
+
+		}
+
+		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
 
 
 	}

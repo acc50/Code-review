@@ -21,6 +21,10 @@ public:
 	~Thorn();
 
 	void Set_Pos(GLfloat x, GLfloat z);
+	glm::vec3 Get_Pos();
+	GLfloat Get_Size();
+	bool Get_State();
+
 	void Draw(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO);
 	void Render(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, GLfloat x, GLfloat z);
 	void Update(glm::vec3 Pos);

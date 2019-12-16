@@ -97,6 +97,16 @@ void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm
 	this->Pos = EYE;		// 카메라의 위치에 Pos를 항상 이동시킴
 }
 
+void Pacman::Set_Pos_x(GLfloat x)
+{
+	this->Pos.x = x;
+}
+
+void Pacman::Set_Pos_z(GLfloat z)
+{
+	this->Pos.z = z;
+}
+
 glm::vec3 Pacman::Get_Pos()
 {
 	return this->Pos;
@@ -110,4 +120,9 @@ GLfloat Pacman::Get_Size()
 void Pacman::Set_Speed(GLfloat speed)
 {
 	this->sensitive = speed;
+}
+
+GLfloat Pacman::Get_Speed()
+{
+	return sensitive;
 }

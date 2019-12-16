@@ -17,6 +17,16 @@ void Deceleration_Trap::Set_Pos(GLfloat x, GLfloat z)
 	Pos.z = z;
 }
 
+glm::vec3 Deceleration_Trap::Get_Pos()
+{
+	return this->Pos;
+}
+
+GLfloat Deceleration_Trap::Get_Size()
+{
+	return this->size;
+}
+
 void Deceleration_Trap::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
 	glm::mat4 model = glm::mat4(1.0f); //√÷¡æ

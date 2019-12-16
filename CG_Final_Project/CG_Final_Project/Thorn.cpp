@@ -11,10 +11,25 @@ Thorn::~Thorn()
 {
 }
 
+glm::vec3 Thorn::Get_Pos()
+{
+	return this->Pos;
+}
+
+GLfloat Thorn::Get_Size()
+{
+	return this->size;
+}
+
 void Thorn::Set_Pos(GLfloat x, GLfloat z)
 {
 	this->Pos.x = x;
 	this->Pos.z = z;
+}
+
+bool Thorn::Get_State()
+{
+	return this->is_detect_player;
 }
 
 void Thorn::Draw(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)

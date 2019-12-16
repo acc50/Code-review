@@ -11,12 +11,27 @@ Hole::~Hole()
 {
 }
 
+glm::vec3 Hole::Get_Pos()
+{
+	return this->Pos;
+}
+
+GLfloat Hole::Get_Size()
+{
+	return this->size;
+}
 
 void Hole::Set_Pos(GLfloat x, GLfloat z)
 {
 	this->Pos.x = x;
 	this->Pos.z = z;
 }
+
+bool Hole::Get_State()
+{
+	return this->is_activate;
+}
+
 
 void Hole::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
