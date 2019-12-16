@@ -32,14 +32,14 @@ bool Thorn::Get_State()
 	return this->is_detect_player;
 }
 
-void Thorn::Draw(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)
+void Thorn::Draw(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, Pacman* pacman)
 {
 	for (float i = -size; i < size * 1.5f; i += size)
 		for (float j = -size; j < size * 1.5f; j += size)
-			this->Render(ShaderProgram, ConVBO, ConEBO, Pos.x + j, Pos.z + i);
+			this->Render(ShaderProgram, ConVBO, ConEBO, pacman, Pos.x + j, Pos.z + i);
 }
 
-void Thorn::Render(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, GLfloat x, GLfloat z)
+void Thorn::Render(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, Pacman* pacman, GLfloat x, GLfloat z)
 {
 	glm::mat4 model = glm::mat4(1.0f); //최종
 	glm::mat4 tm = glm::mat4(1.0f); //회전
@@ -56,14 +56,20 @@ void Thorn::Render(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, GLfloat x
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
 	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(colorLocation, 1.0f, 0.0f, 0.0f);
+	glUniform3f(colorLocation, 1.0f, 0.0f, 1.0f);
+
+	int lightColorLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f);
+
+	int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightPos");
+	glUniform3f(lightPosLocation, pacman->Get_Pos().x, pacman->Get_Pos().y, pacman->Get_Pos().z);
 
 	glBindBuffer(GL_ARRAY_BUFFER, ConVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ConEBO);
 	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
 	glEnableVertexAttribArray(pos_id);
 	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
-	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
+	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vNormal");
 	glEnableVertexAttribArray(frag_id);
 	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
 
@@ -100,7 +106,7 @@ void Thorn::Update(glm::vec3 Pos)
 	}
 
 	if (is_activated) {		// 감지 후 가시 함정이 발동되었다면
-		
+
 		time += 0.1f;
 
 		if (time > cool_time) {		// 일정 시간이 지나면 다시 발동할 수 있게 됨
@@ -126,5 +132,5 @@ void Thorn::Detect_to_Player(glm::vec3 Pos)		// 플레이어를 감지함
 
 	}
 
-	
+
 }

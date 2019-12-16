@@ -29,6 +29,32 @@ bool InitProgram(unsigned int& ShaderProgram)
 
 
 }
+bool InitProgram2(unsigned int& ShaderProgram)
+{
+	const char* vertexSource = filetobuf("vertex2.glsl");
+	const char* fragmentSource = filetobuf("fragment2.glsl");
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexSource, NULL);
+	glCompileShader(vertexShader);
+	if (!Check(vertexShader)) return false;
+
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+	glCompileShader(fragmentShader);
+	if (!Check(fragmentShader)) return false;
+
+	ShaderProgram = glCreateProgram();
+	glAttachShader(ShaderProgram, vertexShader);
+	glAttachShader(ShaderProgram, fragmentShader);
+	glLinkProgram(ShaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	if (!Check(ShaderProgram)) {
+		glDeleteProgram(ShaderProgram);
+		return false;
+
+	}
+}
 
 
 bool Check(unsigned int ShaderProgram)
@@ -53,11 +79,11 @@ bool Check(unsigned int ShaderProgram)
 void CreateCon(GLuint& ConEBO, GLuint& ConVBO)
 {
 	GLfloat vertexData[] = {
-		0.0f,0.5f,0.0f,		1.0f,1.0f,0.0f,  //0번점
-		-0.5f,-0.5f,-0.5f,	0.0f,1.0f,0.0f,  //1번점
-		-0.5f,-0.5f,0.5f,	1.0f,0.0f,0.0f,  //2번점
-		0.5f,-0.5f,0.5f,	1.0f,1.0f,0.5f,  //3번점
-		0.5f,-0.5f,-0.5f,	0.0f,0.0f,0.0f  //4번점
+		0.0f,0.5f,0.0f,		0.0f,0.5f,0.0f,		 //0번점
+		-0.5f,-0.5f,-0.5f,	-0.5f,-0.5f,-0.5f,	 //1번점
+		-0.5f,-0.5f,0.5f,	-0.5f,-0.5f,0.5f,	 //2번점
+		0.5f,-0.5f,0.5f,	0.5f,-0.5f,0.5f,	 //3번점
+		0.5f,-0.5f,-0.5f,	0.5f,-0.5f,-0.5f,	//4번점
 	};
 	glGenBuffers(1, &ConVBO);
 
@@ -80,15 +106,24 @@ void CreateCube(GLuint ShaderProgram,GLuint& EBO, GLuint& VBO)
 {
 
 	GLfloat vertex[] = {
-		-0.5f,0.5f,-0.5f,	1.0f,1.0f,0.0f,  //0번점
-		-0.5f,0.5f,0.5f,	0.0f,1.0f,1.0f,  //1번점
-		0.5f,0.5f,0.5f,		1.0f,0.0f,1.0f,  //2번점
-		0.5f,0.5f,-0.5f,	0.0f,0.0f,1.0f,  //3번점
+		//-0.5f,0.5f,-0.5f,	1.0f,1.0f,0.0f,  //0번점
+		//-0.5f,0.5f,0.5f,	0.0f,1.0f,1.0f,  //1번점
+		//0.5f,0.5f,0.5f,		1.0f,0.0f,1.0f,  //2번점
+		//0.5f,0.5f,-0.5f,	0.0f,0.0f,1.0f,  //3번점
 
-		-0.5f,-0.5f,-0.5f,	0.0f,1.0f,0.0f,  //4번점
-		-0.5f,-0.5f,0.5f,	1.0f,0.0f,0.0f,  //5번점
-		0.5f,-0.5f,0.5f,	1.0f,1.0f,0.5f,  //6번점
-		0.5f,-0.5f,-0.5f,	0.0f,0.0f,0.0f,  //7번점
+		//-0.5f,-0.5f,-0.5f,	0.0f,1.0f,0.0f,  //4번점
+		//-0.5f,-0.5f,0.5f,	1.0f,0.0f,0.0f,  //5번점
+		//0.5f,-0.5f,0.5f,	1.0f,1.0f,0.5f,  //6번점
+		//0.5f,-0.5f,-0.5f,	0.0f,0.0f,0.0f,  //7번점
+		-0.5f,0.5f,-0.5f,	 -1.0f,1.0f,-1.0f, //0번점
+		-0.5f,0.5f,0.5f,	  -1.0f,1.0f,1.0f,//1번점
+		0.5f,0.5f,0.5f,		  1.0f,1.0f,1.0f,//2번점
+		0.5f,0.5f,-0.5f,	  1.0f,1.0f,-1.0f,//3번점
+
+		-0.5f,-0.5f,-0.5f,	  -1.0f,-1.0f,-1.0f,//4번점
+		-0.5f,-0.5f,0.5f,	  -1.0f,-1.0f,1.0f,//5번점
+		0.5f,-0.5f,0.5f,	  1.0f,-1.0f,1.0f,//6번점
+		0.5f,-0.5f,-0.5f,	  1.0f,-1.0f,-1.0f//7번점
 	};
 	glGenBuffers(1, &VBO);
 

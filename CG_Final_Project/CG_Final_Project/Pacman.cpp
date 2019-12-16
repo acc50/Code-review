@@ -31,7 +31,7 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
 	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(objColorLocation, 1.0, 1.0f, 0.0f);
+	glUniform3f(objColorLocation, 1.0, 0.0f, 1.0f);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, SVBO);

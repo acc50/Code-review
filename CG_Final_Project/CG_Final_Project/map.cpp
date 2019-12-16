@@ -18,7 +18,7 @@ TrapPoint itemPoint[ITEM_COUNT] = {
 
 };
 
-void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
+void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
 {
 	glm::mat4 model = glm::mat4(1.0f); //최종
 	glm::mat4 tm = glm::mat4(1.0f);
@@ -31,10 +31,14 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
 	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(colorLocation, 0.0f, 0.0f, 1.0f);
+	glUniform3f(colorLocation, 0.7f, 0.3f, 0.2f);
 
-	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
-	glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
+	int lightColorLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f);
+
+	int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightPos");
+	glUniform3f(lightPosLocation, 0.0f, 0.0f, 0.0f);
+	std::cout << "pac X" << pacman->Get_Pos().x << std::endl;
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -44,9 +48,10 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	glEnableVertexAttribArray(pos_id);
 	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
 
-	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
+	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vNormal");
 	glEnableVertexAttribArray(frag_id);
 	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 }
@@ -167,9 +172,9 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 
 }
 
-void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])
+void draw_map(GLuint ShaderProgram, SuperGLuint super, Pacman* pacman, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])
 {
-	draw_floor(ShaderProgram, super.VBO, super.EBO);
+	draw_floor(ShaderProgram, super.VBO, super.EBO,pacman);
 
 	// 좌표점찍기
 	/*for (float i = -5.0f; i <= 5.0f; i += 1.0f) {
@@ -179,16 +184,16 @@ void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorn
 
 	// 벽 그리기
 	for (int i = 0; i < WALL_COUNT; ++i) {
-		walls[i].Draw(ShaderProgram, super.VBO, super.EBO);
+		walls[i].Draw(ShaderProgram, super.VBO, super.EBO,pacman);
 	}
 
 	//좌표줄때 옆으로 두배늘리고 싶으면 x좌표를 2배늘린것의 중간값을 줘야됨
 	//ex   좌표 0~2로가는 길이의 벽만들려면 초기값을 1로하고 가로너비를 2를 준다.
 
 	for (int i = 0; i < TRAP_COUNT; ++i) {
-		thorns[i].Draw(ShaderProgram, super.ConVBO, super.ConEBO);
-		holes[i].Draw(ShaderProgram, super.VBO, super.EBO);
-		traps[i].Draw(ShaderProgram, super.VBO, super.EBO);
+		thorns[i].Draw(ShaderProgram, super.ConVBO, super.ConEBO,pacman);
+		holes[i].Draw(ShaderProgram, super.VBO, super.EBO,pacman);
+		traps[i].Draw(ShaderProgram, super.VBO, super.EBO,pacman);
 	}
 
 	for (int i = 0; i < 4; ++i)

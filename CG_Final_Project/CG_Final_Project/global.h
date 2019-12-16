@@ -10,7 +10,7 @@
 #include <string>
 #include <cmath>
 #include "file2buf.h"
-
+#include "Pacman.h"
 
 
 struct SuperGLuint{

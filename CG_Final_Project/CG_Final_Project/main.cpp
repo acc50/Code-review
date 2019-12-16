@@ -10,6 +10,7 @@
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLuint ShaderProgram;
+GLuint lightShaderProgram;
 
 SuperGLuint super;
 
@@ -75,15 +76,16 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 	glEnable(GL_CULL_FACE);
+	InitProgram(ShaderProgram);
+	InitProgram2(lightShaderProgram);
 	CreateCon(super.ConEBO, super.ConVBO);
 	CreateCube(ShaderProgram, super.EBO, super.VBO);
 	CreateSphere(super.SVBO, super.SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
+
+
 	
-
-	InitProgram(ShaderProgram);
-
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(InputKey);			// 키보드 입력
 	glutKeyboardUpFunc(KeyUP);			// 키보드 떼는 것
@@ -120,14 +122,14 @@ void myTimer(int a)
 	// ------------------------- 함정 충돌체크 부분 -------------------------------------
 
 	// 함정의 좌표를 받을 벡터
-	glm::vec3 t_pos;		
+	glm::vec3 t_pos;
 	glm::vec3 h_pos;
 	glm::vec3 d_pos;
 
 	// 팩맨의 정보
 	glm::vec3 pacman_pos = pacman->Get_Pos();
 	GLfloat rsize = pacman->Get_Size();
-	
+
 	// 함정의 좌표, 사이즈를 담을 변수
 	GLfloat x, z;
 	GLfloat trap_size;
@@ -163,7 +165,7 @@ void myTimer(int a)
 
 	for (int i = 0; i < TRAP_COUNT; ++i) {
 		h_pos = holes[i].Get_Pos();
-		trap_size = thorns[i].Get_Size();		
+		trap_size = thorns[i].Get_Size();
 
 		x = h_pos.x;
 		z = h_pos.z;
@@ -171,7 +173,7 @@ void myTimer(int a)
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && holes[i].Get_State()) {		// 충돌검사
 
 			if (pacman->is_on_floor) {		// 팩맨에 구멍 함정에 걸렸는데 바닥에 있으면
-				
+
 				pacman->Fall_Hole();
 
 			}
@@ -218,7 +220,7 @@ void myTimer(int a)
 		{
 
 			pacman->Set_Speed(30.0f);
-			
+
 		}
 
 	}
@@ -344,12 +346,12 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps);
+
+	draw_map(lightShaderProgram, super, pacman, walls, thorns, holes, deceleration_traps);
 
 	// 플레이어 위치
 	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
 
-	//draw_sphere(ShaderProgram, suSVBO, SNVBO, 0.0f, 0.0f);
 
 
 	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, pacman->Get_lifecount(), itemCOunt);

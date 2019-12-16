@@ -18,7 +18,7 @@ public:
 	glm::vec3 Get_Pos();
 	GLfloat Get_Size();
 
-	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
+	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman);
 	void Crash_to_Player(glm::vec3 Pos, GLfloat size);
 };
 
