@@ -80,6 +80,7 @@ int main(int argc, char** argv)
 	CreateSphere(super.SVBO, super.SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
+	
 
 	InitProgram(ShaderProgram);
 
@@ -91,6 +92,7 @@ int main(int argc, char** argv)
 	glutPassiveMotionFunc(PassiveMouse);
 	glutTimerFunc(10, myTimer, 2);
 	glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(10, JumpTimer, 1);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
 }
@@ -144,28 +146,9 @@ void myTimer(int a)
 
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && thorns[i].Get_State()) {		// 충돌검사
 
+			pacman->Die();		// Die 함수에서 lifeCount 의 감소, 부활이 자동으로 일어남
+								// gameover 는 text 출력으로 임시 구현 되어있음
 
-			// 충돌 시 처리 할 부분 , 충돌은 일어남
-			
-			
-			pacman->Die();
-			switch (lifeCount)
-			{
-			case 4:
-				lifeCount = 3;
-				break;
-			case 3:
-				lifeCount = 2;
-				break;
-			case 2:
-				lifeCount = 1;
-				break;
-			case 1:
-				lifeCount = 0;
-				break;
-			default:
-				break;
-			}
 
 		}
 	}
@@ -187,7 +170,11 @@ void myTimer(int a)
 
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && holes[i].Get_State()) {		// 충돌검사
 
-			// 충돌 시 처리 할 부분 , 충돌은 일어남  구멍 함정의 중앙 근처에 있어야 발동하도록 함
+			if (pacman->is_on_floor) {		// 팩맨에 구멍 함정에 걸렸는데 바닥에 있으면
+				
+				pacman->Fall_Hole();
+
+			}
 		}
 	}
 
@@ -315,9 +302,8 @@ void Timer(int a)
 	glutPostRedisplay();
 
 
-	if(move)
 
-		glutTimerFunc(10, Timer, a);
+	glutTimerFunc(10, Timer, a);
 }
 
 void JumpTimer(int a)
@@ -340,8 +326,7 @@ void JumpTimer(int a)
 
 	glutPostRedisplay();
 
-	if(JUMP)
-		glutTimerFunc(15, JumpTimer, a);
+	glutTimerFunc(15, JumpTimer, a);
 }
 
 GLvoid drawScene()
@@ -361,12 +346,14 @@ GLvoid drawScene()
 
 	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps);
 
-	//임시 플레이어 위치
+	// 플레이어 위치
 	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
 
 	//draw_sphere(ShaderProgram, suSVBO, SNVBO, 0.0f, 0.0f);
-	float r = 3.0f;
-	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, lifeCount, itemCOunt);
+
+
+	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, pacman->Get_lifecount(), itemCOunt);
+
 
 	glutSwapBuffers();
 
@@ -400,7 +387,6 @@ void InputKey(unsigned char key, int x, int y)
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
 
-			glutTimerFunc(10, Timer, 1);
 		}
 
 		break;
@@ -410,7 +396,6 @@ void InputKey(unsigned char key, int x, int y)
 
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
-			glutTimerFunc(10, Timer, 1);
 		}
 
 		break;
@@ -420,7 +405,6 @@ void InputKey(unsigned char key, int x, int y)
 
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
-			glutTimerFunc(10, Timer, 1);
 		}
 
 		break;
@@ -430,7 +414,6 @@ void InputKey(unsigned char key, int x, int y)
 
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
-			glutTimerFunc(10, Timer, 1);
 		}
 
 		break;
@@ -493,8 +476,6 @@ void KeyUP(unsigned char key, int x, int y)
 	case 32:			// 스페이스바
 		if (!JUMP) {
 			JUMP = true;
-
-			glutTimerFunc(20, JumpTimer, 1);
 
 		}
 		break;

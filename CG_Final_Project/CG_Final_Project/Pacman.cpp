@@ -110,7 +110,6 @@ void Pacman::Update(bool JUMP, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 		Fall(EYE, AT, UP);
 		Jump(JUMP, EYE, AT, UP);
 
-		std::cout << Pos.y << std::endl;
 
 		EYE.y = Pos.y;
 		
@@ -122,8 +121,17 @@ void Pacman::Update(bool JUMP, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 
 void Pacman::Fall(glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 {
-	if (!is_on_floor)
+	if (!is_on_floor) {
 		Pos.y += fall_speed;
+	}
+}
+
+void Pacman::Fall_Hole()
+{
+	is_on_floor = false;	// 중력 작용
+	jump_count = 0;			// 점프 불가능
+	is_fall = true;			// 함정에 빠져 떨어짐 true
+	is_jump = false;
 }
 
 void Pacman::Jump(bool Space, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
@@ -224,6 +232,7 @@ void Pacman::Revive(glm::vec3 &EYE, glm::vec3 &AT, GLfloat &yaw, GLfloat &pitch)
 	
 }
 
+
 void Pacman::Die()
 {
 	this->is_lived = false;
@@ -232,4 +241,9 @@ void Pacman::Die()
 bool Pacman::Get_is_lived()
 {
 	return this->is_lived;
+}
+
+int Pacman::Get_lifecount()
+{
+	return this->life;
 }

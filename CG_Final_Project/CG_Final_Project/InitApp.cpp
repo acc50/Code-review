@@ -336,6 +336,7 @@ void renderBitmapCharacter(void *font,int lifeCount,int itemCount)  //폰트, 남은
 	const char* remainjewel = "remain Jewel:";
 	const char *c;
 	char a[10];
+
 	glRasterPos3f(-0.8, 0.9, 0.0f);//life id   //텍스트 위치
 	for (c = life; *c != '\0'; c++)
 	{
@@ -345,6 +346,7 @@ void renderBitmapCharacter(void *font,int lifeCount,int itemCount)  //폰트, 남은
 	for (c = a; *c != '\0'; c++)
 	{
 		glutBitmapCharacter(font, *a);  //라이프카운트 출력
+
 	}
 	glRasterPos3f(0.6, 0.9, 0.0f);//life id
 	for (c = remainjewel; *c != '\0'; c++)
