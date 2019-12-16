@@ -106,7 +106,7 @@ void Timer(int a)
 GLvoid drawScene()
 {
 	//
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -124,7 +124,7 @@ GLvoid drawScene()
 	//draw_wall(ShaderProgram, VBO, EBO, EYE.x, EYE.z, 0.5f, 0.5f);		// 카메라위치 = 캐릭터위치 -> 1인칭
 	
 	//임시 플레이어 위치
-	pacman->Draw(ShaderProgram, VBO, EBO);
+	pacman->Draw(ShaderProgram, SVBO, SNVBO);
 
 	draw_sphere(ShaderProgram, SVBO, SNVBO, 0.0f, 0.0f);
 	float r = 3.0f;
