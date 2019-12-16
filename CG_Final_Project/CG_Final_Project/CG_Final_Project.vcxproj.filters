@@ -25,6 +25,12 @@
     <Filter Include="헤더 파일\Trap">
       <UniqueIdentifier>{d2825a59-ccbe-4f03-a506-234b3bd7181e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Object">
+      <UniqueIdentifier>{61045099-8e48-4305-bd63-5175ba11f379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object">
+      <UniqueIdentifier>{fc5667d5-cdad-4b3e-bf6e-87dc56ac4364}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file2buf.cpp">
@@ -57,6 +63,9 @@
     <ClCompile Include="Deceleration_Trap.cpp">
       <Filter>소스 파일\Trap</Filter>
     </ClCompile>
+    <ClCompile Include="WinItem.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file2buf.h">
@@ -85,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="Deceleration_Trap.h">
       <Filter>헤더 파일\Trap</Filter>
+    </ClInclude>
+    <ClInclude Include="WinItem.h">
+      <Filter>헤더 파일\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

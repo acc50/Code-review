@@ -17,7 +17,7 @@ Wall walls[WALL_COUNT];
 Thorn thorns[TRAP_COUNT];
 Hole holes[TRAP_COUNT];
 Deceleration_Trap deceleration_traps[TRAP_COUNT];
-
+WinItem win_items[WIN_COUNT];
 
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
@@ -40,7 +40,6 @@ Pacman *pacman = new Pacman;
 
 //HSJ추가사항
 int itemID[4];  //실제아이템아이디
-int lifeCount = 3;
 int itemCOunt = 4;
 //
 EViewPoint view_point = E_DEFAULT_VIEW;
@@ -62,6 +61,7 @@ int main(int argc, char** argv)
 	for (int i = 0; i < 4; ++i) {
 		itemID[i] = rand() % 4 + i * 4;
 	}
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(WINDOW_POSITION, WINDOW_POSITION);
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 	CreateCube(ShaderProgram, super.EBO, super.VBO);
 	CreateSphere(super.SVBO, super.SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
-	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
+	init_wall(walls, thorns, holes, deceleration_traps, win_items);				// 벽 좌표 설정
 	
 
 	InitProgram(ShaderProgram);
@@ -231,13 +231,14 @@ void myTimer(int a)
 
 void Timer(int a)
 {
-
+	glm::vec3 pacman_pos;
+	GLfloat rsize;
 
 	if (move) {
 		pacman->Move(Up, Down, Right, Left, EYE, AT, UP);
 
-		glm::vec3 pacman_pos = pacman->Get_Pos();
-		GLfloat rsize = pacman->Get_Size() + 0.1f;			// 팩맨의 반지름
+		pacman_pos = pacman->Get_Pos();
+		rsize = pacman->Get_Size() + 0.1f;			// 팩맨의 반지름
 
 		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
 
@@ -292,6 +293,48 @@ void Timer(int a)
 		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
 
 
+
+
+
+		// -------------------------- 벽과 아이템 충돌 -----------------------------------
+
+		glm::vec3 item_pos;
+
+		GLfloat px, pz;		// 팩맨 위치
+		GLfloat dx, dz;		// 팩맨 과 아이템 거리
+		GLfloat d;		// 반지름의 합
+
+		for (int i = 0; i < WIN_COUNT; ++i) {
+			item_pos = win_items[i].Get_Pos();
+
+			x = item_pos.x;		// 아이템 위치
+			z = item_pos.z;
+
+			px = pacman_pos.x;
+			pz = pacman_pos.z;
+
+			dx = x - px;
+			dz = z - pz;
+			
+			d = win_items[i].Get_Size() + pacman->Get_Size();
+			
+			if ((dx * dx) + (dz * dz) <= (d * d)) {	// 반지름 합 보다 원점끼리의 거리가 작으면 -> 충돌
+				
+				win_items[i].is_activate = false;
+				itemCOunt -= 1;
+
+				if (itemCOunt == 0) {
+					std::cout << "게임 승리!" << std::endl;
+				}
+			}
+		}
+
+
+
+		// -------------------------- 벽과 아이템 충돌 -----------------------------------
+
+
+
 	}
 
 
@@ -340,7 +383,7 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps);
+	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps, win_items);
 
 	// 플레이어 위치
 	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
@@ -370,9 +413,6 @@ void InputKey(unsigned char key, int x, int y)
 		break;
 	case '3':
 		view_point = E_TOP_VIEW;
-		break;
-	case 'y':
-
 		break;
 
 	case 'w':
@@ -412,10 +452,6 @@ void InputKey(unsigned char key, int x, int y)
 
 		break;
 
-	case 'z':
-		break;
-	case 'x':
-		break;
 
 	case 'q':
 		glutLeaveMainLoop();

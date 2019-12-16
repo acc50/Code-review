@@ -51,7 +51,7 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 
 }
 
-void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])				// 좌표 정의는 한번만 여기서 해줌
+void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[])				// 좌표 정의는 한번만 여기서 해줌
 {
 
 	// 가로폭을 사용자정의로 지정하면 세로폭은 0.1로  둘중하나는 무조건 0.1
@@ -165,9 +165,12 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	traps[2].Set_Pos(trapPoint[7].x, trapPoint[7].z);
 
 
+	for (int i = 0; i < WIN_COUNT; ++i) {
+		items[i].Set_Pos(itemPoint[itemID[i]].x, itemPoint[itemID[i]].z);
+	}
 }
 
-void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])
+void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[])
 {
 	draw_floor(ShaderProgram, super.VBO, super.EBO);
 
@@ -191,8 +194,12 @@ void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorn
 		traps[i].Draw(ShaderProgram, super.VBO, super.EBO);
 	}
 
-	for (int i = 0; i < 4; ++i)
-		draw_WinItem(ShaderProgram, super.SVBO, super.SNVBO, itemPoint[itemID[i]]);
+	//for (int i = 0; i < 4; ++i)
+	//	draw_WinItem(ShaderProgram, super.SVBO, super.SNVBO, itemPoint[itemID[i]]);
+
+	for (int i = 0; i < WIN_COUNT; ++i) {
+		items[i].Draw(ShaderProgram, super.SVBO, super.SNVBO);
+	}
 
 }
 
