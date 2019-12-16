@@ -319,7 +319,7 @@ void Timer(int a)
 			
 			d = win_items[i].Get_Size() + pacman->Get_Size();
 			
-			if ((dx * dx) + (dz * dz) <= (d * d)) {	// 반지름 합 보다 원점끼리의 거리가 작으면 -> 충돌
+			if ((dx * dx) + (dz * dz) <= (d * d) && win_items[i].is_activate) {	// 반지름 합 보다 원점끼리의 거리가 작으면 -> 충돌
 				
 				win_items[i].is_activate = false;
 				itemCOunt -= 1;
