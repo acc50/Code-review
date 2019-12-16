@@ -21,6 +21,13 @@ TrapPoint itemPoint[ITEM_COUNT] = {
 	{3.5f,1.5f},{2.5f,3.5f},{0.5f,3.5f},{4.5f,4.5f}
 };
 
+//Point patrolPoint[28] = {
+//	{-4.5,-4.5},{-4.5,-2.5},{-3.5,-2.5},{-3.5,-1.5},{-4.5,-1.5},{-4.5,-0.5},{-3.5,-0.5},
+//	{-3.5, 0.5},{-4.5, 0.5},{-4.5, 2.5},{-3.5, 2.5},{-3.5, 3.5},{-4.5, 3.5},{-4.5, 4.5},
+//	{4.5,  4.5},{4.5,  3.5},{3.5,  3.5},{3.5,  2.5},{4.5, 2.5},{4.5,  0.5},{3.5,  0.5},
+//	{3.5, -0.5},{4.5, -0.5},{4.5, -1.5},{3.5, -1.5},{3.5, -2.5},{4.5, -2.5},{4.5, -4.5}
+//};
+
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
 	glm::mat4 model = glm::mat4(1.0f); //최종
@@ -156,12 +163,11 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	walls[41].Set_Wall(5.0f, 0.0f, default_width2, 10.0f);
 
 	GLfloat gx = -0.5f;
+	int type = 1;
 	for (int i = 0; i < GHOST_COUNT; ++i) {
-		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre));
+		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre), type++);
 		gx += 0.5f;
 	}
-
-	// --------------- 함정 랜덤 생성 -------------
 
 
 

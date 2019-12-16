@@ -18,6 +18,13 @@
 struct TrapPoint {
 	float x, z;
 };
+
+//struct Point {
+//	float x, z;
+//};
+
+
+
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 
 void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[]);
