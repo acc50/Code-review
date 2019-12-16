@@ -38,6 +38,7 @@ glm::vec3 T_AT = glm::vec3(0.0f, 0.0f, 0.0f);		// 탑뷰기준 카메라 AT
 bool Left = false, Right = false, Up = false, Down = false;		// 키 입력
 bool move = false;
 bool click = false;
+bool JUMP = false;
 Pacman *pacman = new Pacman;
 
 EViewPoint view_point = E_DEFAULT_VIEW;
@@ -47,6 +48,7 @@ void MouseMotion(int x, int y);
 void PassiveMouse(int x, int y);
 void Timer(int a);
 void myTimer(int a);
+void JumpTimer(int a);
 void InputKey(unsigned char key, int x, int y);
 void KeyUP(unsigned char key, int x, int y);
 bool check_move();								// 이동키가 눌렸나 확인하는 함수
@@ -223,17 +225,20 @@ void myTimer(int a)
 
 void Timer(int a)
 {
+
+
 	if (move) {
 		pacman->Move(Up, Down, Right, Left, EYE, AT, UP);
+
+		glm::vec3 pacman_pos = pacman->Get_Pos();
+		GLfloat rsize = pacman->Get_Size() + 0.1f;			// 팩맨의 반지름
 
 		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
 
 		glm::vec3 w_pos;
-		glm::vec3 pacman_pos = pacman->Get_Pos();
 
 		GLfloat x, z;									// 벽의 x, z값
 		GLfloat width, depth;							// 벽의 가로 세로 길이
-		GLfloat rsize = pacman->Get_Size() + 0.05f;				// 팩맨의 반지름
 
 		GLfloat degree = 0.05f;		// 밀어낼때 판단 정도,   값이 너무 작으면 충돌처리 X, 값이 너무 크면 밀어내기 제대로 못함
 
@@ -286,8 +291,32 @@ void Timer(int a)
 
 	glutPostRedisplay();
 
-	if(move)			// 움직이는 상태면 타이머 재호출
+	if(move)
 		glutTimerFunc(10, Timer, a);
+}
+
+void JumpTimer(int a)
+{
+	/// ----------------------------- 업데이트 --------------------
+
+	glm::vec3 pacman_pos = pacman->Get_Pos();
+
+	pacman->Update(JUMP, EYE, AT, UP);
+
+	if ((pacman_pos.y < 1.0f) && !pacman->is_fall && !pacman->is_on_floor) {		// y좌표, 팩맨이 함정에 빠지지않았는가, 바닥위에 있지않은가
+		pacman->Set_Pos_y();
+		pacman->Set_Jump();
+		JUMP = false;				// 점프 후 바닥에 닿았다면 점프 false
+	}
+
+
+
+	/// ----------------------------- 업데이트 --------------------
+
+	glutPostRedisplay();
+
+	if(JUMP)
+		glutTimerFunc(15, JumpTimer, a);
 }
 
 GLvoid drawScene()
@@ -345,6 +374,7 @@ void InputKey(unsigned char key, int x, int y)
 			
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
+
 			glutTimerFunc(10, Timer, 1);
 		}
 
@@ -433,6 +463,15 @@ void KeyUP(unsigned char key, int x, int y)
 			move = false;
 		}
 
+		break;
+
+	case 32:			// 스페이스바
+		if (!JUMP) {
+			JUMP = true;
+
+			glutTimerFunc(20, JumpTimer, 1);
+
+		}
 		break;
 
 	}

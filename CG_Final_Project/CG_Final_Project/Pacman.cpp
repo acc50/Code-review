@@ -98,11 +98,68 @@ void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm
 
 		EYE = this->Pos;		// 카메라의 위치에 Pos를 항상 이동시킴
 	}
+
+}
+
+void Pacman::Update(bool JUMP, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
+{
+	GLfloat temp = Pos.y;
+
+	if (is_lived) {
+		Fall(EYE, AT, UP);
+		Jump(JUMP, EYE, AT, UP);
+
+		std::cout << Pos.y << std::endl;
+
+		EYE.y = Pos.y;
+		
+		temp = Pos.y - temp;
+
+		AT.y += temp;
+	}
+}
+
+void Pacman::Fall(glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
+{
+	if (!is_on_floor)
+		Pos.y += fall_speed;
+}
+
+void Pacman::Jump(bool Space, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
+{
+	if (is_on_floor && jump_count > 0 && Space) {	// 땅위에 있고, 점프 횟수가 있으면 점프
+		is_on_floor = false;
+		is_jump = true;
+		jump_count = 0;
+	}
+
+	if (is_jump) {
+		Pos.y += jump_speed;
+
+		std::cout << Pos.y << std::endl;
+
+		if (Pos.y >= this->MAX_HEIGHT) {		// 최대높이까지 올라가면
+			is_jump = false;
+		}
+	}
+
+}
+
+void Pacman::Set_Jump()
+{
+	is_on_floor = true;
+	jump_count = 1;
+	is_jump = false;
 }
 
 void Pacman::Set_Pos_x(GLfloat x)
 {
 	this->Pos.x = x;
+}
+
+void Pacman::Set_Pos_y()
+{
+	this->Pos.y = 0.0f + 1.0f;
 }
 
 void Pacman::Set_Pos_z(GLfloat z)
