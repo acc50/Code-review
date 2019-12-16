@@ -17,7 +17,9 @@ GLuint SVBO;  //구 정점정보
 GLuint SNVBO; //구 노멀정보
 
 Wall walls[WALL_COUNT];
-Thorn thorns[THORN_COUNT];
+Thorn thorns[TRAP_COUNT];
+Hole holes[TRAP_COUNT];
+Deceleration_Trap deceleration_traps[TRAP_COUNT];
 
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
@@ -67,7 +69,7 @@ int main(int argc, char** argv)
 	CreateCube(ShaderProgram, EBO, VBO);
 	CreateSphere(SVBO, SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
-	init_wall(walls, thorns);				// 벽 좌표 설정
+	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
 
 	InitProgram(ShaderProgram);
 	glutDisplayFunc(drawScene);
@@ -85,13 +87,16 @@ int main(int argc, char** argv)
 void myTimer(int a)
 {
 
-	/*if (thronTime > 0.6f)
-		thronTime = -1.0f;
-	thronTime += 0.1f;*/
 
-	for (int i = 0; i < THORN_COUNT; ++i) {
+	// ---------------------------- 함정 업데이트 부분 -----------------------------
+
+	for (int i = 0; i < TRAP_COUNT; ++i) {
 		thorns[i].Update(pacman->Get_Pos());
+		holes[i].Update(pacman->Get_Pos());
 	}
+
+
+	// ---------------------------- 함정 업데이트 부분 -----------------------------
 
 	glutPostRedisplay();
 	glutTimerFunc(100, myTimer, 2);
@@ -127,7 +132,7 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO, walls, thorns);
+	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO, walls, thorns, holes, deceleration_traps);
 	
 	//임시 플레이어 위치
 	pacman->Draw(ShaderProgram, VBO, EBO);

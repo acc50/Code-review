@@ -4,10 +4,11 @@
 
 #include "Wall.h"
 #include "Thorn.h"
+#include "Hole.h"
+#include "Deceleration_Trap.h"
 
-#define THORN_COUNT 3
 #define WALL_COUNT 42
-#define TRAP_COUNT 9
+#define TRAP_COUNT 3
 
 
 struct TrapPoint {
@@ -15,13 +16,7 @@ struct TrapPoint {
 };
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 
-void init_wall(Wall walls[], Thorn thorns[]);
-void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO, GLuint ConVBO, GLuint ConEBO, Wall walls[], Thorn thorns[]);
-
-void draw_thorn(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, float x, float z); //가시함정
-void draw_thorns(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, TrapPoint id);
-
-void draw_hole(GLuint ShaderProgram, GLuint VBO, GLuint EBO, TrapPoint id);// 구덩이함정
-void draw_slow(GLuint ShaderProgram, GLuint VBO, GLuint EBO, TrapPoint id);//슬로우 함정
+void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[]);
+void draw_map(GLuint ShaderProgram, GLuint VBO, GLuint EBO, GLuint ConVBO, GLuint ConEBO, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[]);
 
 #endif

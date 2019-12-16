@@ -53,8 +53,6 @@ void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm
 {
 	// 원래는 EYE 와 AT 기준으로 이동해야함
 
-	GLfloat step = 20;
-
 	glm::vec3 front_dir = AT - EYE;		// EYE 기준 AT 으로 가는 방향 벡터
 	front_dir = front_dir / (sqrt(front_dir.x * front_dir.x + front_dir.y * front_dir.y + front_dir.z * front_dir.z));
 	glm::vec3 back_dir = glm::vec3(-front_dir.x, -front_dir.y, -front_dir.z);
@@ -67,37 +65,47 @@ void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm
 	glm::vec3 right_dir = glm::vec3(-left_dir.x, -left_dir.y, -left_dir.z);
 
 	if (Up) {
-		EYE.x += front_dir.x / step;
-		EYE.z += front_dir.z / step;
-		AT.x += front_dir.x / step;
-		AT.z += front_dir.z / step;
+		EYE.x += front_dir.x / sensitive;
+		EYE.z += front_dir.z / sensitive;
+		AT.x += front_dir.x / sensitive;
+		AT.z += front_dir.z / sensitive;
 	}
 
 	if (Down) {
-		EYE.x += back_dir.x / step;
-		EYE.z += back_dir.z / step;
-		AT.x += back_dir.x / step;
-		AT.z += back_dir.z / step;
+		EYE.x += back_dir.x / sensitive;
+		EYE.z += back_dir.z / sensitive;
+		AT.x += back_dir.x / sensitive;
+		AT.z += back_dir.z / sensitive;
 	}
 
 	if (Left) {
-		EYE.x += left_dir.x / step;
-		EYE.z += left_dir.z / step;
-		AT.x += left_dir.x / step;
-		AT.z += left_dir.z / step;
+		EYE.x += left_dir.x / sensitive;
+		EYE.z += left_dir.z / sensitive;
+		AT.x += left_dir.x / sensitive;
+		AT.z += left_dir.z / sensitive;
 	}
 
 	if (Right) {
-		EYE.x += right_dir.x / step;
-		EYE.z += right_dir.z / step;
-		AT.x += right_dir.x / step;
-		AT.z += right_dir.z / step;
+		EYE.x += right_dir.x / sensitive;
+		EYE.z += right_dir.z / sensitive;
+		AT.x += right_dir.x / sensitive;
+		AT.z += right_dir.z / sensitive;
 	}
 
-	this->Pos = EYE;
+	this->Pos = EYE;		// 카메라의 위치에 Pos를 항상 이동시킴
 }
 
 glm::vec3 Pacman::Get_Pos()
 {
 	return this->Pos;
+}
+
+GLfloat Pacman::Get_Size()
+{
+	return this->size;
+}
+
+void Pacman::Set_Speed(GLfloat speed)
+{
+	this->sensitive = speed;
 }
