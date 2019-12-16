@@ -308,3 +308,14 @@ void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float
 	glDisableVertexAttribArray(light_id);
 	//glDisableVertexAttribArray(normal_id);
 }
+
+
+void renderBitmapCharacter(float x, float y, float z, void *font, const char* string)
+{
+	const char *c;
+	glRasterPos3f(x, y, z);
+	for (c = string; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *c);
+	}
+}

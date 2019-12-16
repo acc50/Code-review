@@ -7,11 +7,17 @@
 #include <gl/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <vector>
+#include <string>
 #include <cmath>
 #include "file2buf.h"
 
 
-extern float thronTime;
+struct SuperGLuint{
+
+	GLuint VBO, EBO, ConVBO, ConEBO, SVBO, SNVBO;
+};
+extern int itemID[4];
+	
 enum EViewPoint
 {
 	
