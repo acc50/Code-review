@@ -5,9 +5,11 @@ in vec3 FragPos;
 in vec3 Normal;
 out vec4 FragColor;
 
+
+uniform vec3 objectColor;
 uniform vec3 LightPos;
 uniform vec3 lightColor;
-uniform vec3 objectColor;
+
 void main()
 {
 

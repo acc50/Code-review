@@ -49,7 +49,6 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 	glDrawArrays(GL_TRIANGLES, 0, 2880);
 
 	glDisableVertexAttribArray(light_id);
-	//glDisableVertexAttribArray(normal_id);
 }
 
 void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
