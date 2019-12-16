@@ -19,15 +19,21 @@ void Thorn::Set_Pos(GLfloat x, GLfloat z)
 
 void Thorn::Draw(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)
 {
+	for (float i = -size; i < size * 1.5f; i += size)
+		for (float j = -size; j < size * 1.5f; j += size)
+			this->Render(ShaderProgram, ConVBO, ConEBO, Pos.x + j, Pos.z + i);
+}
+
+void Thorn::Render(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO, GLfloat x, GLfloat z)
+{
 	glm::mat4 model = glm::mat4(1.0f); //최종
 	glm::mat4 tm = glm::mat4(1.0f); //회전
 	glm::mat4 rm = glm::mat4(1.0f); //회전
 	glm::mat4 sm = glm::mat4(1.0f); //회전
 
-	height = thronTime;			// 가시의 높이, (가시 등장)
 	this->size = 1.0f / 6.0f;
 
-	tm = glm::translate(tm, glm::vec3(Pos.x, height, Pos.z));
+	tm = glm::translate(tm, glm::vec3(x, height, z));
 	sm = glm::scale(sm, glm::vec3(size, height*2.0f, size));
 
 	model = tm * sm;
@@ -54,12 +60,13 @@ void Thorn::Draw(GLuint ShaderProgram, GLuint ConVBO, GLuint ConEBO)
 
 void Thorn::Update(glm::vec3 Pos)
 {
-	if (!is_activated) {		//발동하지 않았다면 플레이어 감지
+	if (!is_activated && !is_detect_player) {		//발동하지 않았다면 플레이어 감지  && 감지하지 않았다면
 		this->Detect_to_Player(Pos);
 	}
 
 	if (is_detect_player) {		// 플레이어를 감지했다면
 		height += 0.1f;
+		time += 0.1f;
 
 		if (height > MAX_HEIGHT) {		// 가시가  최대 높이로 커졌다면
 
@@ -67,11 +74,13 @@ void Thorn::Update(glm::vec3 Pos)
 			height = MAX_HEIGHT;
 		}
 
-		if (height > 1.2f) {		// 최대높이에서 기다렸다가 일정시간이 지나면
+		if (time > duration) {		// 최대높이에서 기다렸다가 일정시간이 지나면
 
 			// 가시를 발동했다 함
 			is_activated = true;
 			is_detect_player = false;
+			time = 0.0f;
+			height = 0.0f;
 		}
 	}
 

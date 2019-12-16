@@ -19,7 +19,6 @@ GLuint SNVBO; //구 노멀정보
 Wall walls[WALL_COUNT];
 Thorn thorns[THORN_COUNT];
 
-float thronTime = 0.0f;
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
 GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
