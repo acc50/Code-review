@@ -48,9 +48,6 @@
     <ClCompile Include="Wall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Pacman.cpp">
-      <Filter>소스 파일\Character</Filter>
-    </ClCompile>
     <ClCompile Include="loadObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -64,6 +61,12 @@
       <Filter>소스 파일\Trap</Filter>
     </ClCompile>
     <ClCompile Include="WinItem.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Pacman.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Ghost.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,9 +86,6 @@
     <ClInclude Include="Wall.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Pacman.h">
-      <Filter>헤더 파일\Character</Filter>
-    </ClInclude>
     <ClInclude Include="Thorn.h">
       <Filter>헤더 파일\Trap</Filter>
     </ClInclude>
@@ -96,6 +96,12 @@
       <Filter>헤더 파일\Trap</Filter>
     </ClInclude>
     <ClInclude Include="WinItem.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Pacman.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Ghost.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
   </ItemGroup>

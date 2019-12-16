@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Deceleration_Trap.cpp" />
     <ClCompile Include="file2buf.cpp" />
+    <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="Hole.cpp" />
     <ClCompile Include="InitApp.cpp" />
     <ClCompile Include="loadObj.cpp" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="Deceleration_Trap.h" />
     <ClInclude Include="file2buf.h" />
+    <ClInclude Include="Ghost.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Hole.h" />
     <ClInclude Include="InitApp.h" />

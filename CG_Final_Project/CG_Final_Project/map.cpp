@@ -4,6 +4,7 @@
 std::random_device rd;
 std::default_random_engine dre(rd());
 std::uniform_int_distribution <int> uid(0, (TRAP_COUNT * 3 - 1));
+std::uniform_real_distribution <GLfloat> color(0.3f, 0.9f);
 
 TrapPoint trapPoint[TRAP_COUNT * 3] = {
 	{-2.5f,-4.5f},{-0.3f,-3.7f},{2.0f,-4.5f},
@@ -53,7 +54,7 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 
 }
 
-void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[])				// 좌표 정의는 한번만 여기서 해줌
+void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[])				// 좌표 정의는 한번만 여기서 해줌
 {
 
 	// 가로폭을 사용자정의로 지정하면 세로폭은 0.1로  둘중하나는 무조건 0.1
@@ -105,8 +106,9 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	//13번
 	walls[17].Set_Wall(-1.0f, -0.5f, default_width2, default_width); //왼쪽세로
 	walls[18].Set_Wall(1.0f, -0.5f, default_width2, default_width); //오른쪽세로
-	walls[19].Set_Wall(0.0f, -1.0f, 2.0f, default_width2); //위쪽 가로
-	walls[20].Set_Wall(0.0f, 0.0f, 2.0f, default_width2); //위쪽 가로
+	walls[19].Set_Wall(-0.7f, -1.0f, 0.7f, default_width2); //위쪽 가로
+	walls[42].Set_Wall(0.7f, -1.0f, 0.7f, default_width2);	// 위쪽 가로
+	walls[20].Set_Wall(0.0f, 0.0f, 2.0f, default_width2); //아래쪽 가로
 
 	//14번
 	walls[21].Set_Wall(4.5f, 0.0f, default_width, default_width2);
@@ -153,6 +155,16 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	walls[40].Set_Wall(-5.0f, 0.0f, default_width2, 10.0f);
 	walls[41].Set_Wall(5.0f, 0.0f, default_width2, 10.0f);
 
+	GLfloat gx = -0.5f;
+	for (int i = 0; i < GHOST_COUNT; ++i) {
+		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre));
+		gx += 0.5f;
+	}
+
+	// --------------- 함정 랜덤 생성 -------------
+
+
+
 	int point[TRAP_COUNT * 3];
 	int temp;
 
@@ -177,12 +189,16 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	}
 
 
+	// --------------- 함정 랜덤 생성 -------------
+
+
+
 	for (int i = 0; i < WIN_COUNT; ++i) {
 		items[i].Set_Pos(itemPoint[itemID[i]].x, itemPoint[itemID[i]].z);
 	}
 }
 
-void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[])
+void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[])
 {
 	draw_floor(ShaderProgram, super.VBO, super.EBO);
 
