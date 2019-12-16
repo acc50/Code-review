@@ -41,12 +41,14 @@ public:
 	void Set_Jump();
 	void Decrease_Life();
 	void Revive(glm::vec3 &EYE, glm::vec3 &AT, GLfloat &yaw, GLfloat &pitch);
+	void Fall_Hole();
 	void Die();
 
 	glm::vec3 Get_Pos();
 	GLfloat Get_Size();
 	GLfloat Get_Speed();
 	bool Get_is_lived();
+	int Get_lifecount();
 
 	int slowdown_count = -1;
 	bool is_on_floor = true;		// 바닥위에 있는가
