@@ -88,6 +88,10 @@ int main(int argc, char** argv)
 
 void myTimer(int a)
 {
+	if (!pacman->Get_is_lived()) {		// 죽었으면
+		pacman->Revive(EYE, AT, yaw, pitch);
+	}
+
 
 
 	// ---------------------------- 함정 업데이트 부분 -----------------------------
@@ -134,6 +138,7 @@ void myTimer(int a)
 
 			// 충돌 시 처리 할 부분 , 충돌은 일어남
 
+			pacman->Die();
 
 		}
 	}

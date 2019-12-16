@@ -53,49 +53,51 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 
 void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 {
-	// 원래는 EYE 와 AT 기준으로 이동해야함
+	
+	if (is_lived) {		// 살아있어야 움직임
 
-	glm::vec3 front_dir = AT - EYE;		// EYE 기준 AT 으로 가는 방향 벡터
-	front_dir = front_dir / (sqrt(front_dir.x * front_dir.x + front_dir.y * front_dir.y + front_dir.z * front_dir.z));
-	glm::vec3 back_dir = glm::vec3(-front_dir.x, -front_dir.y, -front_dir.z);
+		glm::vec3 front_dir = AT - EYE;		// EYE 기준 AT 으로 가는 방향 벡터
+		front_dir = front_dir / (sqrt(front_dir.x * front_dir.x + front_dir.y * front_dir.y + front_dir.z * front_dir.z));
+		glm::vec3 back_dir = glm::vec3(-front_dir.x, -front_dir.y, -front_dir.z);
 
-	glm::vec3 left_dir = glm::vec3(1.0f);		// UP X front_dir  외적
-	left_dir.x = UP.y * front_dir.z - UP.z * front_dir.y;
-	left_dir.y = UP.z * front_dir.x - UP.x * front_dir.z;
-	left_dir.z = UP.x * front_dir.y - UP.y * front_dir.x;
+		glm::vec3 left_dir = glm::vec3(1.0f);		// UP X front_dir  외적
+		left_dir.x = UP.y * front_dir.z - UP.z * front_dir.y;
+		left_dir.y = UP.z * front_dir.x - UP.x * front_dir.z;
+		left_dir.z = UP.x * front_dir.y - UP.y * front_dir.x;
 
-	glm::vec3 right_dir = glm::vec3(-left_dir.x, -left_dir.y, -left_dir.z);
+		glm::vec3 right_dir = glm::vec3(-left_dir.x, -left_dir.y, -left_dir.z);
 
-	if (Up) {
-		Pos.x += front_dir.x / sensitive;
-		Pos.z += front_dir.z / sensitive;
+		if (Up) {
+			Pos.x += front_dir.x / sensitive;
+			Pos.z += front_dir.z / sensitive;
 
+		}
+
+		if (Down) {
+			Pos.x += back_dir.x / sensitive;
+			Pos.z += back_dir.z / sensitive;
+
+		}
+
+		if (Left) {
+			Pos.x += left_dir.x / sensitive;
+			Pos.z += left_dir.z / sensitive;
+
+		}
+
+		if (Right) {
+			Pos.x += right_dir.x / sensitive;
+			Pos.z += right_dir.z / sensitive;
+		}
+
+		glm::vec3 temp = Pos - EYE;  // -> Pos 에서 EYE 로 가는 벡터
+
+		AT.x += temp.x;
+		AT.z += temp.z;
+
+
+		EYE = this->Pos;		// 카메라의 위치에 Pos를 항상 이동시킴
 	}
-
-	if (Down) {
-		Pos.x += back_dir.x / sensitive;
-		Pos.z += back_dir.z / sensitive;
-
-	}
-
-	if (Left) {
-		Pos.x += left_dir.x / sensitive;
-		Pos.z += left_dir.z / sensitive;
-
-	}
-
-	if (Right) {
-		Pos.x += right_dir.x / sensitive;
-		Pos.z += right_dir.z / sensitive;
-	}
-
-	glm::vec3 temp = Pos - EYE;  // -> Pos 에서 EYE 로 가는 벡터
-
-	AT.x += temp.x;
-	AT.z += temp.z;
-
-
-	EYE = this->Pos;		// 카메라의 위치에 Pos를 항상 이동시킴
 }
 
 void Pacman::Set_Pos_x(GLfloat x)
@@ -126,4 +128,50 @@ void Pacman::Set_Speed(GLfloat speed)
 GLfloat Pacman::Get_Speed()
 {
 	return sensitive;
+}
+
+void Pacman::Decrease_Life()
+{
+	this->life -= 1;
+
+	if (life < 0) {
+		std::cout << "game over" << std::endl;
+
+	}
+	else {
+		is_lived = true;
+		revive_count = 0.0f;
+	}
+}
+
+void Pacman::Revive(glm::vec3 &EYE, glm::vec3 &AT, GLfloat &yaw, GLfloat &pitch)
+{
+	this->revive_count += 0.1f;
+
+	std::cout << revive_count << std::endl;
+
+	if (revive_count > this->MAX_COUNT) {		// 부활 대기 시간이 지나면
+		this->Decrease_Life();
+
+		std::cout << "부활" << std::endl;
+
+		if (life >= 0) {
+			EYE = start_Pos;
+			Pos = start_Pos;
+			AT = start_AT;
+			yaw = 0.0f;
+			pitch = 0.0f;
+		}
+	}
+	
+}
+
+void Pacman::Die()
+{
+	this->is_lived = false;
+}
+
+bool Pacman::Get_is_lived()
+{
+	return this->is_lived;
 }
