@@ -53,8 +53,6 @@ void Ghost::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 
 void Ghost::Update()
 {
-
-
 	if (is_move) {
 		Move();
 	}
@@ -70,16 +68,69 @@ void Ghost::Update()
 
 void Ghost::Move()
 {
+	if (patrol_type == 1)
+		first_Patrol();
+	else if (patrol_type == 2) {
+		second_Patrol();
+	}
 
 }
 
-void Ghost::Init(GLfloat x, GLfloat z, GLfloat r, GLfloat g, GLfloat b)
+void Ghost::first_Patrol()
+{
+	int next_point = (cur_point + 1) % 36;
+
+	glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	next.x = patrolPoint[next_point].x - patrolPoint[cur_point].x;		// x 방향벡터
+	next.z = patrolPoint[next_point].z - patrolPoint[cur_point].z;		// z 방향벡터
+
+	//정규화
+	next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+	next.x /= speed;
+	next.z /= speed;
+
+	this->Pos.x += next.x;
+	this->Pos.z += next.z;
+
+	if (fabsf(Pos.x - patrolPoint[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+	{
+		cur_point = (cur_point + 1) % 36;
+	}
+
+}
+
+void Ghost::second_Patrol()
+{
+	int next_point = (cur_point + 1) % 24;
+
+	glm::vec3 next = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	next.x = patrolPoint2[next_point].x - patrolPoint2[cur_point].x;		// x 방향벡터
+	next.z = patrolPoint2[next_point].z - patrolPoint2[cur_point].z;		// z 방향벡터
+
+	//정규화
+	next = next / sqrt(next.x * next.x + next.y * next.y + next.z * next.z);
+	next.x /= speed;
+	next.z /= speed;
+
+	this->Pos.x += next.x;
+	this->Pos.z += next.z;
+
+	if (fabsf(Pos.x - patrolPoint2[next_point].x) <= 0.001f && fabsf(Pos.z - patrolPoint2[next_point].z) <= 0.001f)	// 다음 위치에 유령이 도달하면
+	{
+		cur_point = (cur_point + 1) % 24;
+	}
+}
+
+void Ghost::Init(GLfloat x, GLfloat z, GLfloat r, GLfloat g, GLfloat b, int type)
 {
 	this->Pos.x = x;
 	this->Pos.z = z;
 	Color.r = r;
 	Color.g = g;
 	Color.b = b;
+	this->patrol_type = type;
 }
 
 void Ghost::Set_Pos_x(GLfloat x)

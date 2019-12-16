@@ -319,7 +319,7 @@ void Timer(int a)
 			
 			d = win_items[i].Get_Size() + pacman->Get_Size();
 			
-			if ((dx * dx) + (dz * dz) <= (d * d)) {	// 반지름 합 보다 원점끼리의 거리가 작으면 -> 충돌
+			if ((dx * dx) + (dz * dz) <= (d * d) && win_items[i].is_activate) {	// 반지름 합 보다 원점끼리의 거리가 작으면 -> 충돌
 				
 				win_items[i].is_activate = false;
 				itemCOunt -= 1;
@@ -336,36 +336,42 @@ void Timer(int a)
 
 
 
-		// -------------------------- 플레이어와 유령 충돌 -----------------------------------
-
-
-		glm::vec3 ghost_pos;
-
-		for (int i = 0; i < GHOST_COUNT; ++i) {
-			ghost_pos = ghosts[i].Get_Pos();
-
-			x = ghost_pos.x;
-			z = ghost_pos.z;
-
-			px = pacman_pos.x;
-			pz = pacman_pos.z;
-
-			dx = x - px;
-			dz = z - pz;
-
-			d = ghosts[i].Get_Size() + pacman->Get_Size() + 0.07f;
-
-			if ((dx * dx) + (dz * dz) <= (d * d) && pacman->Get_is_lived()) {	// 충돌 && 팩맨이 살아있다면
-
-				pacman->Die();
-			}
-		}
-
-
-		// -------------------------- 플레이어와 유령 충돌 -----------------------------------
-
+	
 
 	}
+
+	// -------------------------- 플레이어와 유령 충돌 -----------------------------------
+
+
+	glm::vec3 ghost_pos;
+	GLfloat gx, gz, p_x, p_z, d_x, d_z, d2;
+
+	for (int i = 0; i < GHOST_COUNT; ++i) {
+
+		ghosts[i].Update();			// 유령 움직임
+
+		ghost_pos = ghosts[i].Get_Pos();
+		pacman_pos = pacman->Get_Pos();
+
+		gx = ghost_pos.x;
+		gz = ghost_pos.z;
+
+		p_x = pacman_pos.x;
+		p_z = pacman_pos.z;
+
+		d_x = gx - p_x;
+		d_z = gz - p_z;
+
+		d2 = ghosts[i].Get_Size() + pacman->Get_Size() + 0.07f;
+
+		if ((d_x * d_x) + (d_z * d_z) <= (d2 * d2) && pacman->Get_is_lived()) {	// 충돌 && 팩맨이 살아있다면
+
+			pacman->Die();
+		}
+	}
+
+
+	// -------------------------- 플레이어와 유령 충돌 -----------------------------------
 
 
 	glutPostRedisplay();
