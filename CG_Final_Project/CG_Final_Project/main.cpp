@@ -146,8 +146,26 @@ void myTimer(int a)
 
 
 			// 충돌 시 처리 할 부분 , 충돌은 일어남
-
+			
+			switch (lifeCount)
+			{
+			case 4:
+				lifeCount = 3;
+				break;
+			case 3:
+				lifeCount = 2;
+				break;
+			case 2:
+				lifeCount = 1;
+				break;
+			case 1:
+				lifeCount = 0;
+				break;
+			default:
+				break;
+			}
 			pacman->Die();
+			
 
 		}
 	}
