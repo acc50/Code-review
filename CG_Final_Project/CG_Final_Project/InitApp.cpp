@@ -330,21 +330,21 @@ bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GL
 }
 
 
-void renderBitmapCharacter(void *font,int lifeCount,int itemCount)
+void renderBitmapCharacter(void *font,int lifeCount,int itemCount)  //폰트, 남은생명, 먹어야할 아이템수
 {
-	const char* life = "life:";
+	const char* life = "life:";   
 	const char* remainjewel = "remain Jewel:";
 	const char *c;
 	char a[10];
-	glRasterPos3f(-0.8, 0.9, 0.0f);//life id
+	glRasterPos3f(-0.8, 0.9, 0.0f);//life id   //텍스트 위치
 	for (c = life; *c != '\0'; c++)
 	{
-		glutBitmapCharacter(font, *c);
+		glutBitmapCharacter(font, *c); //텍스트 출력
 	}
-	itoa(lifeCount, a, 10);
+	itoa(lifeCount, a, 10);  //라이프 카운트를 문자로바꿈
 	for (c = a; *c != '\0'; c++)
 	{
-		glutBitmapCharacter(font, *a);
+		glutBitmapCharacter(font, *a);  //라이프카운트 출력
 	}
 	glRasterPos3f(0.6, 0.9, 0.0f);//life id
 	for (c = remainjewel; *c != '\0'; c++)
