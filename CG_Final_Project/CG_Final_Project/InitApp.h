@@ -18,4 +18,4 @@ void Myprojection(GLuint ShaderProgra, EViewPoint viewPoint);
 int loadObj(const char* filename, std::vector< glm::vec3 >& outvertex, std::vector< glm::vec3 >& outnormal, std::vector< glm::vec2 >& outuv);
 void CreateSphere(GLuint& VBO, GLuint& NVBO);
 void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float z);
-void renderBitmapCharacter(float x, float y, float z, void *font, const char* stirng);
+void renderBitmapCharacter(void *font, int lifeCount, int itemCount);

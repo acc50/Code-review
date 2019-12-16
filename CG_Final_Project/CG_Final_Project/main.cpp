@@ -34,7 +34,12 @@ bool Left = false, Right = false, Up = false, Down = false;		// 키 입력
 bool move = false;
 bool click = false;
 Pacman *pacman = new Pacman;
+
+//HSJ추가사항
 int itemID[4];  //실제아이템아이디
+int lifeCount = 3;
+int itemCOunt = 4;
+//
 EViewPoint view_point = E_DEFAULT_VIEW;
 
 void Mouse(int button, int state, int x, int y);
@@ -54,7 +59,7 @@ int main(int argc, char** argv)
 		itemID[i] = rand() % 4 + i * 4;
 	}
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA|GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(WINDOW_POSITION, WINDOW_POSITION);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutCreateWindow("Example1");
@@ -148,7 +153,7 @@ void Timer(int a)
 
 	glutPostRedisplay();
 
-	if(move)			// 움직이는 상태면 타이머 재호출
+	if (move)			// 움직이는 상태면 타이머 재호출
 		glutTimerFunc(10, Timer, a);
 }
 
@@ -168,14 +173,14 @@ GLvoid drawScene()
 	Myprojection(ShaderProgram, view_point);
 
 	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps);
-	
+
 	//임시 플레이어 위치
 	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
 
 	//draw_sphere(ShaderProgram, suSVBO, SNVBO, 0.0f, 0.0f);
 	float r = 3.0f;
-	renderBitmapCharacter(0.0f, 0.0f, 0.0f, GLUT_BITMAP_HELVETICA_18, "life: 3");
-	
+	renderBitmapCharacter(GLUT_BITMAP_HELVETICA_18, lifeCount, itemCOunt);
+
 	glutSwapBuffers();
 
 
@@ -204,7 +209,7 @@ void InputKey(unsigned char key, int x, int y)
 
 	case 'w':
 		Up = true;
-			
+
 		if (!move) {				// 이동중이면 timer 함수를 호출 X
 			move = true;
 			glutTimerFunc(10, Timer, 1);
@@ -260,7 +265,7 @@ void InputKey(unsigned char key, int x, int y)
 
 void KeyUP(unsigned char key, int x, int y)
 {
-	switch (key){
+	switch (key) {
 	case 'w':
 		Up = false;
 

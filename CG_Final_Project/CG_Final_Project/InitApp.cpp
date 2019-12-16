@@ -310,12 +310,30 @@ void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float
 }
 
 
-void renderBitmapCharacter(float x, float y, float z, void *font, const char* string)
+void renderBitmapCharacter(void *font,int lifeCount,int itemCount)
 {
+	const char* life = "life:";
+	const char* remainjewel = "remain Jewel:";
 	const char *c;
-	glRasterPos3f(x, y, z);
-	for (c = string; *c != '\0'; c++)
+	char a[10];
+	glRasterPos3f(-0.8, 0.9, 0.0f);//life id
+	for (c = life; *c != '\0'; c++)
 	{
 		glutBitmapCharacter(font, *c);
+	}
+	itoa(lifeCount, a, 10);
+	for (c = a; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *a);
+	}
+	glRasterPos3f(0.6, 0.9, 0.0f);//life id
+	for (c = remainjewel; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *c);
+	}
+	itoa(itemCount, a, 10);
+	for (c = a; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *a);
 	}
 }
