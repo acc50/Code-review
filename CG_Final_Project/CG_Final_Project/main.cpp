@@ -10,7 +10,7 @@
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLuint ShaderProgram;
-GLuint lightShaderProgram;
+GLuint ShaderProgram2;
 
 SuperGLuint super;
 
@@ -18,7 +18,7 @@ Wall walls[WALL_COUNT];
 Thorn thorns[TRAP_COUNT];
 Hole holes[TRAP_COUNT];
 Deceleration_Trap deceleration_traps[TRAP_COUNT];
-
+WinItem win_items[WIN_COUNT];
 
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
@@ -38,10 +38,10 @@ bool move = false;
 bool click = false;
 bool JUMP = false;
 Pacman *pacman = new Pacman;
+Ghost ghosts[GHOST_COUNT];
 
 //HSJ추가사항
 int itemID[4];  //실제아이템아이디
-int lifeCount = 3;
 int itemCOunt = 4;
 //
 EViewPoint view_point = E_DEFAULT_VIEW;
@@ -63,6 +63,7 @@ int main(int argc, char** argv)
 	for (int i = 0; i < 4; ++i) {
 		itemID[i] = rand() % 4 + i * 4;
 	}
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(WINDOW_POSITION, WINDOW_POSITION);
@@ -76,16 +77,16 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 	glEnable(GL_CULL_FACE);
-	InitProgram(ShaderProgram);
-	InitProgram2(lightShaderProgram);
 	CreateCon(super.ConEBO, super.ConVBO);
 	CreateCube(ShaderProgram, super.EBO, super.VBO);
 	CreateSphere(super.SVBO, super.SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
-	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
-
-
+	init_wall(walls, thorns, holes, deceleration_traps, win_items, ghosts);				// 벽 좌표 설정
 	
+
+	InitProgram(ShaderProgram);
+	InitProgram2(ShaderProgram2);
+
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(InputKey);			// 키보드 입력
 	glutKeyboardUpFunc(KeyUP);			// 키보드 떼는 것
@@ -122,14 +123,14 @@ void myTimer(int a)
 	// ------------------------- 함정 충돌체크 부분 -------------------------------------
 
 	// 함정의 좌표를 받을 벡터
-	glm::vec3 t_pos;
+	glm::vec3 t_pos;		
 	glm::vec3 h_pos;
 	glm::vec3 d_pos;
 
 	// 팩맨의 정보
 	glm::vec3 pacman_pos = pacman->Get_Pos();
 	GLfloat rsize = pacman->Get_Size();
-
+	
 	// 함정의 좌표, 사이즈를 담을 변수
 	GLfloat x, z;
 	GLfloat trap_size;
@@ -146,11 +147,12 @@ void myTimer(int a)
 		x = t_pos.x;
 		z = t_pos.z;
 
-		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && thorns[i].Get_State()) {		// 충돌검사
+		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && thorns[i].Get_State() && pacman->Get_is_lived()) {		// 충돌검사
+
 
 			pacman->Die();		// Die 함수에서 lifeCount 의 감소, 부활이 자동으로 일어남
 								// gameover 는 text 출력으로 임시 구현 되어있음
-
+			std::cout << "걸림";
 
 		}
 	}
@@ -165,7 +167,7 @@ void myTimer(int a)
 
 	for (int i = 0; i < TRAP_COUNT; ++i) {
 		h_pos = holes[i].Get_Pos();
-		trap_size = thorns[i].Get_Size();
+		trap_size = thorns[i].Get_Size() - 0.1f;		
 
 		x = h_pos.x;
 		z = h_pos.z;
@@ -173,7 +175,7 @@ void myTimer(int a)
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && holes[i].Get_State()) {		// 충돌검사
 
 			if (pacman->is_on_floor) {		// 팩맨에 구멍 함정에 걸렸는데 바닥에 있으면
-
+				
 				pacman->Fall_Hole();
 
 			}
@@ -182,12 +184,7 @@ void myTimer(int a)
 
 
 
-
 	// ---------------------------------- 구멍 함정 ------------------------------------------------
-
-
-
-
 
 
 
@@ -205,7 +202,7 @@ void myTimer(int a)
 		// 초기 속도값이 30.0f
 		// 충돌 && 초기속도값이면 속도를 낮춤
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && 			// 충돌검사
-			(fabsf(pacman->Get_Speed() - 30.0f) <= FLT_EPSILON))
+			(fabsf(pacman->Get_Speed() - 30.0f) <= FLT_EPSILON) && pacman->is_on_floor)
 		{
 
 			pacman->Set_Speed(100.0f);		// 속도 값으로 이동거리를 나누기 때문에 속도값이 크면느려짐
@@ -220,7 +217,7 @@ void myTimer(int a)
 		{
 
 			pacman->Set_Speed(30.0f);
-
+			
 		}
 
 	}
@@ -237,13 +234,14 @@ void myTimer(int a)
 
 void Timer(int a)
 {
-
+	glm::vec3 pacman_pos;
+	GLfloat rsize;
 
 	if (move) {
 		pacman->Move(Up, Down, Right, Left, EYE, AT, UP);
 
-		glm::vec3 pacman_pos = pacman->Get_Pos();
-		GLfloat rsize = pacman->Get_Size() + 0.1f;			// 팩맨의 반지름
+		pacman_pos = pacman->Get_Pos();
+		rsize = pacman->Get_Size() + 0.1f;			// 팩맨의 반지름
 
 		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
 
@@ -298,6 +296,77 @@ void Timer(int a)
 		// -------------------------- 벽과 플레이어 충돌 -----------------------------------
 
 
+
+		
+
+		// -------------------------- 플레이어와 아이템 충돌 -----------------------------------
+
+		glm::vec3 item_pos;
+
+		GLfloat px, pz;		// 팩맨 위치
+		GLfloat dx, dz;		// 팩맨 과 아이템 거리
+		GLfloat d;		// 반지름의 합
+
+		for (int i = 0; i < WIN_COUNT; ++i) {
+			item_pos = win_items[i].Get_Pos();
+
+			x = item_pos.x;		// 아이템 위치
+			z = item_pos.z;
+
+			px = pacman_pos.x;
+			pz = pacman_pos.z;
+
+			dx = x - px;
+			dz = z - pz;
+			
+			d = win_items[i].Get_Size() + pacman->Get_Size();
+			
+			if ((dx * dx) + (dz * dz) <= (d * d) && win_items[i].is_activate) {	// 반지름 합 보다 원점끼리의 거리가 작으면 -> 충돌
+				
+				win_items[i].is_activate = false;
+				itemCOunt -= 1;
+
+				if (itemCOunt == 0) {
+					std::cout << "게임 승리!" << std::endl;
+				}
+			}
+		}
+
+
+
+		// -------------------------- 플레이어와 아이템 충돌 -----------------------------------
+
+
+
+		// -------------------------- 플레이어와 유령 충돌 -----------------------------------
+
+
+		glm::vec3 ghost_pos;
+
+		for (int i = 0; i < GHOST_COUNT; ++i) {
+			ghost_pos = ghosts[i].Get_Pos();
+
+			x = ghost_pos.x;
+			z = ghost_pos.z;
+
+			px = pacman_pos.x;
+			pz = pacman_pos.z;
+
+			dx = x - px;
+			dz = z - pz;
+
+			d = ghosts[i].Get_Size() + pacman->Get_Size() + 0.07f;
+
+			if ((dx * dx) + (dz * dz) <= (d * d) && pacman->Get_is_lived()) {	// 충돌 && 팩맨이 살아있다면
+
+				pacman->Die();
+			}
+		}
+
+
+		// -------------------------- 플레이어와 유령 충돌 -----------------------------------
+
+
 	}
 
 
@@ -346,16 +415,17 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-
-	draw_map(lightShaderProgram, super, pacman, walls, thorns, holes, deceleration_traps);
-
+	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps, win_items, ghosts);
+	draw_floor(ShaderProgram2, super.VBO, super.EBO,pacman);
 	// 플레이어 위치
 	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
 
+	for (int i = 0; i < GHOST_COUNT; ++i) {
+		ghosts[i].Draw(ShaderProgram, super.SVBO, super.SNVBO);
+	}
 
-
+	
 	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, pacman->Get_lifecount(), itemCOunt);
-
 
 	glutSwapBuffers();
 
@@ -378,9 +448,6 @@ void InputKey(unsigned char key, int x, int y)
 		break;
 	case '3':
 		view_point = E_TOP_VIEW;
-		break;
-	case 'y':
-
 		break;
 
 	case 'w':
@@ -420,10 +487,6 @@ void InputKey(unsigned char key, int x, int y)
 
 		break;
 
-	case 'z':
-		break;
-	case 'x':
-		break;
 
 	case 'q':
 		glutLeaveMainLoop();

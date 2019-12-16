@@ -33,7 +33,7 @@ bool Hole::Get_State()
 }
 
 
-void Hole::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
+void Hole::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
 	glm::mat4 model = glm::mat4(1.0f); //ÃÖÁ¾
 	glm::mat4 tm = glm::mat4(1.0f);
@@ -48,13 +48,10 @@ void Hole::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
 	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(colorLocation, 1.0f, 0.0f, 1.0f);
+	glUniform3f(colorLocation, this->Color.r, this->Color.g, this->Color.b);
 
-	int lightColorLocation = glGetUniformLocation(ShaderProgram, "LightColor");
-	glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f);
-
-	int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightPos");
-	glUniform3f(lightPosLocation, pacman->Get_Pos().x, pacman->Get_Pos().y, pacman->Get_Pos().z);
+	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);

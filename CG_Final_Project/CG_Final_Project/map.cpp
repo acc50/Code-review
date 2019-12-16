@@ -1,21 +1,24 @@
 #include "map.h"
+#include <random>
 
-
+std::random_device rd;
+std::default_random_engine dre(rd());
+std::uniform_int_distribution <int> uid(0, (TRAP_COUNT * 3 - 1));
+std::uniform_real_distribution <GLfloat> color(0.3f, 0.9f);
 
 TrapPoint trapPoint[TRAP_COUNT * 3] = {
 	{-2.5f,-4.5f},{-0.3f,-3.7f},{2.0f,-4.5f},
 	{-2.5f,0.0f},{2.0f,0.3f},{-3.5f,2.0f},
 	{-1.5f,3.0f},{1.5f,3.0f},{3.5f,2.0f}
-
 };
+
+int flag[TRAP_COUNT * 3] = { 0, };
 
 TrapPoint itemPoint[ITEM_COUNT] = {
 	{-4.5f,-4.5f},{-3.5,-2.5},{-1.5f,-3.5},{-4.5,-2.5},//2분면
 	{1.5f,-4.5f},{4.5f,-4.5f},{2.5f,-2.5f},{3.5f,-1.5f},//1분면
 	{-4.5f,0.5f},{-0.5f,1.5f},{-2.5f,2.5f},{-4.5f,4.5f},
 	{3.5f,1.5f},{2.5f,3.5f},{0.5f,3.5f},{4.5f,4.5f}
-
-
 };
 
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
@@ -27,36 +30,38 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
 	tm = glm::translate(tm, glm::vec3(0.0f, 0.0f, 0.0f));
 	sm = glm::scale(sm, glm::vec3(10.0f, 0.25f, 10.0f));
 	model = tm * rm * sm *model;
-	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
-	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(colorLocation, 0.7f, 0.3f, 0.2f);
-
-	int lightColorLocation = glGetUniformLocation(ShaderProgram, "LightColor");
-	glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f);
-
 	int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightPos");
-	glUniform3f(lightPosLocation, 0.0f, 0.0f, 0.0f);
-	std::cout << "pac X" << pacman->Get_Pos().x << std::endl;
+	glUniform3f(lightPosLocation, pacman->Get_Pos().x,pacman->Get_Pos().y,pacman->Get_Pos().z);
+	int lightColorLocation = glGetUniformLocation(ShaderProgram, "lightColor");
+	glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f);
+	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	glUniform3f(objColorLocation, 1.0, 0.0f, 1.0f);
 
+	int range = glGetUniformLocation(ShaderProgram, " lightRange");
+	glUniform1f(range, 0.1f);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
-	glEnableVertexAttribArray(pos_id);
-	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
-
-	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vNormal");
-	glEnableVertexAttribArray(frag_id);
-	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	int light_id = glGetAttribLocation(ShaderProgram, "vPos");
+	glEnableVertexAttribArray(light_id);
+	glVertexAttribPointer(light_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+	//std::cout << light_id << std::endl;
+	int normal_id = glGetAttribLocation(ShaderProgram, "vNormal");
+	//std::cout << normal_id << std::endl;
+	glEnableVertexAttribArray(normal_id);
+	glVertexAttribPointer(normal_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+	glDisableVertexAttribArray(light_id);
+	glDisableVertexAttribArray(normal_id);
+
 }
 
-void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])				// 좌표 정의는 한번만 여기서 해줌
+void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[])				// 좌표 정의는 한번만 여기서 해줌
 {
 
 	// 가로폭을 사용자정의로 지정하면 세로폭은 0.1로  둘중하나는 무조건 0.1
@@ -108,8 +113,9 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	//13번
 	walls[17].Set_Wall(-1.0f, -0.5f, default_width2, default_width); //왼쪽세로
 	walls[18].Set_Wall(1.0f, -0.5f, default_width2, default_width); //오른쪽세로
-	walls[19].Set_Wall(0.0f, -1.0f, 2.0f, default_width2); //위쪽 가로
-	walls[20].Set_Wall(0.0f, 0.0f, 2.0f, default_width2); //위쪽 가로
+	walls[19].Set_Wall(-0.7f, -1.0f, 0.7f, default_width2); //위쪽 가로
+	walls[42].Set_Wall(0.7f, -1.0f, 0.7f, default_width2);	// 위쪽 가로
+	walls[20].Set_Wall(0.0f, 0.0f, 2.0f, default_width2); //아래쪽 가로
 
 	//14번
 	walls[21].Set_Wall(4.5f, 0.0f, default_width, default_width2);
@@ -156,25 +162,52 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	walls[40].Set_Wall(-5.0f, 0.0f, default_width2, 10.0f);
 	walls[41].Set_Wall(5.0f, 0.0f, default_width2, 10.0f);
 
+	GLfloat gx = -0.5f;
+	for (int i = 0; i < GHOST_COUNT; ++i) {
+		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre));
+		gx += 0.5f;
+	}
 
-	thorns[0].Set_Pos(trapPoint[1].x, trapPoint[1].z);
-	thorns[1].Set_Pos(trapPoint[3].x, trapPoint[3].z);
-	thorns[2].Set_Pos(trapPoint[4].x, trapPoint[4].z);
-
-	holes[0].Set_Pos(trapPoint[0].x, trapPoint[0].z);
-	holes[1].Set_Pos(trapPoint[5].x, trapPoint[5].z);
-	holes[2].Set_Pos(trapPoint[8].x, trapPoint[8].z);
-
-	traps[0].Set_Pos(trapPoint[2].x, trapPoint[2].z);
-	traps[1].Set_Pos(trapPoint[6].x, trapPoint[6].z);
-	traps[2].Set_Pos(trapPoint[7].x, trapPoint[7].z);
+	// --------------- 함정 랜덤 생성 -------------
 
 
+
+	int point[TRAP_COUNT * 3];
+	int temp;
+
+	for (int i = 0; i < TRAP_COUNT * 3; ++i) {
+		
+		while (1) {
+			temp = uid(dre);
+
+			if (flag[temp] == 0) {
+				flag[temp] = 1;
+				point[i] = temp;
+				break;
+			}
+		}
+
+	}
+
+	for (int i = 0; i < TRAP_COUNT; ++i) {
+		thorns[i].Set_Pos(trapPoint[point[i]].x, trapPoint[point[i]].z);
+		holes[i].Set_Pos(trapPoint[point[i + 3]].x, trapPoint[point[i + 3]].z);
+		traps[i].Set_Pos(trapPoint[point[i + 6]].x, trapPoint[point[i + 6]].z);
+	}
+
+
+	// --------------- 함정 랜덤 생성 -------------
+
+
+
+	for (int i = 0; i < WIN_COUNT; ++i) {
+		items[i].Set_Pos(itemPoint[itemID[i]].x, itemPoint[itemID[i]].z);
+	}
 }
 
-void draw_map(GLuint ShaderProgram, SuperGLuint super, Pacman* pacman, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[])
+void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[])
 {
-	draw_floor(ShaderProgram, super.VBO, super.EBO,pacman);
+	
 
 	// 좌표점찍기
 	/*for (float i = -5.0f; i <= 5.0f; i += 1.0f) {
@@ -184,60 +217,20 @@ void draw_map(GLuint ShaderProgram, SuperGLuint super, Pacman* pacman, Wall wall
 
 	// 벽 그리기
 	for (int i = 0; i < WALL_COUNT; ++i) {
-		walls[i].Draw(ShaderProgram, super.VBO, super.EBO,pacman);
+		walls[i].Draw(ShaderProgram, super.VBO, super.EBO);
 	}
 
 	//좌표줄때 옆으로 두배늘리고 싶으면 x좌표를 2배늘린것의 중간값을 줘야됨
 	//ex   좌표 0~2로가는 길이의 벽만들려면 초기값을 1로하고 가로너비를 2를 준다.
 
 	for (int i = 0; i < TRAP_COUNT; ++i) {
-		thorns[i].Draw(ShaderProgram, super.ConVBO, super.ConEBO,pacman);
-		holes[i].Draw(ShaderProgram, super.VBO, super.EBO,pacman);
-		traps[i].Draw(ShaderProgram, super.VBO, super.EBO,pacman);
+		thorns[i].Draw(ShaderProgram, super.ConVBO, super.ConEBO);
+		holes[i].Draw(ShaderProgram, super.VBO, super.EBO);
+		traps[i].Draw(ShaderProgram, super.VBO, super.EBO);
 	}
 
-	for (int i = 0; i < 4; ++i)
-		draw_WinItem(ShaderProgram, super.SVBO, super.SNVBO, itemPoint[itemID[i]]);
+	for (int i = 0; i < WIN_COUNT; ++i) {
+		items[i].Draw(ShaderProgram, super.SVBO, super.SNVBO);
+	}
 
-}
-
-
-
-void draw_WinItem(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, TrapPoint p)
-{
-	float size = 1.0f / 80.0f;
-
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 tm = glm::mat4(1.0f);
-	glm::mat4 sm = glm::mat4(1.0f);
-
-	sm = glm::scale(sm, glm::vec3(size, size, size));
-	tm = glm::translate(tm, glm::vec3(p.x, 0.45f, p.z));
-
-
-	model = tm * sm * model;
-
-	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-
-	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(objColorLocation, 1.0, 1.0f, 1.0f);
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
-	int light_id = glGetAttribLocation(ShaderProgram, "vPos");
-	glEnableVertexAttribArray(light_id);
-	glVertexAttribPointer(light_id, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	//glBindBuffer(GL_ARRAY_BUFFER, SNVBO);
-
-	//int normal_id = glGetAttribLocation(ShaderProgram, "vNormal");  //노말
-	//
-	//glEnableVertexAttribArray(normal_id);
-	//glVertexAttribPointer(normal_id, 3, GL_FLOAT, GL_FALSE, 0, 0);//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
-
-	glDrawArrays(GL_TRIANGLES, 0, 2880);
-
-	glDisableVertexAttribArray(light_id);
-	//glDisableVertexAttribArray(normal_id);
 }

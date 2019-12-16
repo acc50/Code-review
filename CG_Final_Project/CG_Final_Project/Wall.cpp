@@ -21,7 +21,7 @@ void Wall::Set_Wall(GLfloat x, GLfloat z, GLfloat width, GLfloat depth)
 	this->depth = depth / 2;
 }
 
-void Wall::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO,Pacman* pacman)
+void Wall::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 {
 	glm::mat4 model = glm::mat4(1.0f); //ÃÖÁ¾
 	glm::mat4 tm = glm::mat4(1.0f);
@@ -38,11 +38,8 @@ void Wall::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO,Pacman* pacman)
 	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
 	glUniform3f(colorLocation, 1.0f, 0.0f, 1.0f);
 
-	int lightColorLocation = glGetUniformLocation(ShaderProgram, "LightColor");
-	glUniform3f(lightColorLocation, 1.0f,1.0f,1.0f);
-
-	int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightPos");
-	glUniform3f(lightPosLocation,pacman->Get_Pos().x, pacman->Get_Pos().y, pacman->Get_Pos().z);
+	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -52,11 +49,9 @@ void Wall::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO,Pacman* pacman)
 	glEnableVertexAttribArray(pos_id);
 	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
 
-	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vNormal");
+	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
 	glEnableVertexAttribArray(frag_id);
 	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	
-	
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 

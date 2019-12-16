@@ -23,7 +23,7 @@ public:
 	bool Get_State();
 
 
-	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman);
+	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 	void Update(glm::vec3 Pos);
 	void Detect_to_Player(glm::vec3 Pos);		// 플레이어를 감지함
 

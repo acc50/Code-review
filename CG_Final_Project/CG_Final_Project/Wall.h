@@ -1,6 +1,6 @@
 #pragma once
 #include "global.h"
-#include "Pacman.h"
+
 class Wall
 {
 private:
@@ -13,7 +13,7 @@ public:
 	~Wall();
 
 	void Set_Wall(GLfloat x, GLfloat z, GLfloat width, GLfloat depth);
-	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO,Pacman* pacman);
+	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 
 	glm::vec3 Get_Pos();
 	GLfloat Get_Width();		// 가로 길이 내보냄

@@ -31,7 +31,7 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
 	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(objColorLocation, 1.0, 0.0f, 1.0f);
+	glUniform3f(objColorLocation, 1.0, 1.0f, 0.0f);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
@@ -49,6 +49,7 @@ void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 	glDrawArrays(GL_TRIANGLES, 0, 2880);
 
 	glDisableVertexAttribArray(light_id);
+	//glDisableVertexAttribArray(normal_id);
 }
 
 void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
@@ -122,6 +123,13 @@ void Pacman::Fall(glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 {
 	if (!is_on_floor) {
 		Pos.y += fall_speed;
+
+		if (Pos.y < -5.0f) {
+			Pos.y = -5.0f;
+
+			if(is_lived)
+				Die();
+		}
 	}
 }
 
@@ -204,8 +212,14 @@ void Pacman::Decrease_Life()
 
 	}
 	else {
-		is_lived = true;
+		is_lived = true;			// 부활후 초기상태로 만듬
 		revive_count = 0.0f;
+
+		// 점프관련 초기화
+		is_on_floor = true;
+		jump_count = 1;
+		is_jump = false;
+		is_fall = false;
 	}
 }
 
