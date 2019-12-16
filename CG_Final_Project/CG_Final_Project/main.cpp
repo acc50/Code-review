@@ -16,7 +16,11 @@ GLuint EBO;
 GLuint SVBO;  //구 정점정보
 GLuint SNVBO; //구 노멀정보
 
-float thronTime = 0.0f;
+Wall walls[WALL_COUNT];
+Thorn thorns[TRAP_COUNT];
+Hole holes[TRAP_COUNT];
+Deceleration_Trap deceleration_traps[TRAP_COUNT];
+
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
 GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
@@ -65,7 +69,7 @@ int main(int argc, char** argv)
 	CreateCube(ShaderProgram, EBO, VBO);
 	CreateSphere(SVBO, SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
-	init_wall();				// 벽 좌표 설정
+	init_wall(walls, thorns, holes, deceleration_traps);				// 벽 좌표 설정
 
 	InitProgram(ShaderProgram);
 	glutDisplayFunc(drawScene);
@@ -79,15 +83,58 @@ int main(int argc, char** argv)
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
 }
+
 void myTimer(int a)
 {
 
-	if (thronTime > 0.6f)
-		thronTime = -1.0f;
-	thronTime += 0.1f;
+
+	// ---------------------------- 함정 업데이트 부분 -----------------------------
+
+	for (int i = 0; i < TRAP_COUNT; ++i) {
+		thorns[i].Update(pacman->Get_Pos());
+		holes[i].Update(pacman->Get_Pos());
+	}
+
+
+	// ---------------------------- 함정 업데이트 부분 -----------------------------
+
+
+
+	// ------------------------- 충돌체크 부분 -------------------------------------
+
+
+
+
+	// -------------------------- 벽과 플레이어 충돌 -----------------------------------
+	glm::vec3 w_pos;
+
+	GLfloat x, z;
+	GLfloat pacman_x, pacmax_z;
+
+	for (int i = 0; i < WALL_COUNT; ++i) {
+		w_pos = walls[i].Get_Pos();
+
+		x = w_pos.x;
+		z = w_pos.z;
+
+		if()
+
+
+
+
+	}
+
+	// -------------------------- 벽과 플레이어 충돌 -----------------------------------
+
+
+
+
+	// ------------------------- 충돌체크 부분 -------------------------------------
+
 	glutPostRedisplay();
 	glutTimerFunc(100, myTimer, 2);
 }
+
 void Timer(int a)
 {
 	if (move) {
@@ -118,10 +165,7 @@ GLvoid drawScene()
 
 	Myprojection(ShaderProgram, view_point);
 
-	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO);
-
-	//임시 플레이어 위치
-	//draw_wall(ShaderProgram, VBO, EBO, EYE.x, EYE.z, 0.5f, 0.5f);		// 카메라위치 = 캐릭터위치 -> 1인칭
+	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO, walls, thorns, holes, deceleration_traps);
 	
 	//임시 플레이어 위치
 	pacman->Draw(ShaderProgram, SVBO, SNVBO);

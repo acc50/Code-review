@@ -19,6 +19,12 @@
     <Filter Include="헤더 파일\Character">
       <UniqueIdentifier>{3308ea88-2fb4-4f5f-93b9-3df8eeb2c3ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Trap">
+      <UniqueIdentifier>{14bd3e23-8cac-4013-9fe5-941ae040d1b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Trap">
+      <UniqueIdentifier>{d2825a59-ccbe-4f03-a506-234b3bd7181e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file2buf.cpp">
@@ -42,6 +48,15 @@
     <ClCompile Include="loadObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Thorn.cpp">
+      <Filter>소스 파일\Trap</Filter>
+    </ClCompile>
+    <ClCompile Include="Hole.cpp">
+      <Filter>소스 파일\Trap</Filter>
+    </ClCompile>
+    <ClCompile Include="Deceleration_Trap.cpp">
+      <Filter>소스 파일\Trap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file2buf.h">
@@ -61,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="Pacman.h">
       <Filter>헤더 파일\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Thorn.h">
+      <Filter>헤더 파일\Trap</Filter>
+    </ClInclude>
+    <ClInclude Include="Hole.h">
+      <Filter>헤더 파일\Trap</Filter>
+    </ClInclude>
+    <ClInclude Include="Deceleration_Trap.h">
+      <Filter>헤더 파일\Trap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

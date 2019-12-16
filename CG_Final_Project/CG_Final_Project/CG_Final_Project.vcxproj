@@ -139,20 +139,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Deceleration_Trap.cpp" />
     <ClCompile Include="file2buf.cpp" />
+    <ClCompile Include="Hole.cpp" />
     <ClCompile Include="InitApp.cpp" />
     <ClCompile Include="loadObj.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="Pacman.cpp" />
+    <ClCompile Include="Thorn.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Deceleration_Trap.h" />
     <ClInclude Include="file2buf.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="Hole.h" />
     <ClInclude Include="InitApp.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="Pacman.h" />
+    <ClInclude Include="Thorn.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
