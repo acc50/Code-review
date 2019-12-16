@@ -2,11 +2,18 @@
 #include <float.h>
 #include "InitApp.h"
 #include "Pacman.h"
+#include <stdio.h>
+#include <Windows.h>
+
 
 #define WINDOW_POSITION 100		// 윈도우가 스크린의 어디에서 시작하는지 -> 스크린 좌상단 기준 x,x 에서 윈도우가 열림
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "freeglut.lib")
+#pragma comment(lib, "winmm.lib")
+#include <Mmsystem.h>
+#include <Digitalv.h>
+
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLuint ShaderProgram;
@@ -45,6 +52,13 @@ int itemCOunt = 4;
 //
 EViewPoint view_point = E_DEFAULT_VIEW;
 
+MCI_OPEN_PARMS m_mciOpenParms;
+MCI_PLAY_PARMS m_mciPlayParms;
+DWORD m_dwDeviceID;
+MCI_OPEN_PARMS mciOpen;
+MCI_PLAY_PARMS mciPlay;
+
+
 void Mouse(int button, int state, int x, int y);
 void MouseMotion(int x, int y);
 void PassiveMouse(int x, int y);
@@ -55,6 +69,8 @@ void InputKey(unsigned char key, int x, int y);
 void KeyUP(unsigned char key, int x, int y);
 bool check_move();								// 이동키가 눌렸나 확인하는 함수
 void Set_Cursor();
+
+int dwID;
 
 int main(int argc, char** argv)
 {
@@ -82,8 +98,19 @@ int main(int argc, char** argv)
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall(walls, thorns, holes, deceleration_traps, win_items, ghosts);				// 벽 좌표 설정
 	
+	mciOpen.lpstrElementName = TEXT("ww.mp3");
+	mciOpen.lpstrDeviceType = TEXT("mpegvideo");
+
+	mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
+		(DWORD)(LPVOID)&mciOpen);
+	dwID = mciOpen.wDeviceID;
+	mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, // play & repeat
+		(DWORD)(LPVOID)&m_mciPlayParms);
 
 	InitProgram(ShaderProgram);
+	
+
+
 
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(InputKey);			// 키보드 입력
@@ -491,8 +518,13 @@ void InputKey(unsigned char key, int x, int y)
 
 		break;
 
+	case 'k':
+
+		break;
+
 
 	case 'q':
+
 		glutLeaveMainLoop();
 		break;
 
