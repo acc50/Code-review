@@ -147,6 +147,8 @@ void myTimer(int a)
 
 			// 충돌 시 처리 할 부분 , 충돌은 일어남
 			
+			
+			pacman->Die();
 			switch (lifeCount)
 			{
 			case 4:
@@ -164,8 +166,6 @@ void myTimer(int a)
 			default:
 				break;
 			}
-			pacman->Die();
-			
 
 		}
 	}
@@ -366,7 +366,7 @@ GLvoid drawScene()
 
 	//draw_sphere(ShaderProgram, suSVBO, SNVBO, 0.0f, 0.0f);
 	float r = 3.0f;
-	renderBitmapCharacter(GLUT_BITMAP_HELVETICA_18, lifeCount, itemCOunt);
+	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, lifeCount, itemCOunt);
 
 	glutSwapBuffers();
 
