@@ -123,6 +123,13 @@ void Pacman::Fall(glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 {
 	if (!is_on_floor) {
 		Pos.y += fall_speed;
+
+		if (Pos.y < -5.0f) {
+			Pos.y = -5.0f;
+
+			if(is_lived)
+				Die();
+		}
 	}
 }
 
@@ -205,8 +212,14 @@ void Pacman::Decrease_Life()
 
 	}
 	else {
-		is_lived = true;
+		is_lived = true;			// 부활후 초기상태로 만듬
 		revive_count = 0.0f;
+
+		// 점프관련 초기화
+		is_on_floor = true;
+		jump_count = 1;
+		is_jump = false;
+		is_fall = false;
 	}
 }
 

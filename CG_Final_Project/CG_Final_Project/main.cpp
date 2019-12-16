@@ -144,12 +144,12 @@ void myTimer(int a)
 		x = t_pos.x;
 		z = t_pos.z;
 
-		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && thorns[i].Get_State()) {		// 충돌검사
+		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && thorns[i].Get_State() && pacman->Get_is_lived()) {		// 충돌검사
 
 
 			pacman->Die();		// Die 함수에서 lifeCount 의 감소, 부활이 자동으로 일어남
 								// gameover 는 text 출력으로 임시 구현 되어있음
-			
+			std::cout << "걸림";
 
 		}
 	}
@@ -164,7 +164,7 @@ void myTimer(int a)
 
 	for (int i = 0; i < TRAP_COUNT; ++i) {
 		h_pos = holes[i].Get_Pos();
-		trap_size = thorns[i].Get_Size();		
+		trap_size = thorns[i].Get_Size() - 0.1f;		
 
 		x = h_pos.x;
 		z = h_pos.z;
@@ -181,12 +181,7 @@ void myTimer(int a)
 
 
 
-
 	// ---------------------------------- 구멍 함정 ------------------------------------------------
-
-
-
-
 
 
 
@@ -204,7 +199,7 @@ void myTimer(int a)
 		// 초기 속도값이 30.0f
 		// 충돌 && 초기속도값이면 속도를 낮춤
 		if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, trap_size, trap_size) && 			// 충돌검사
-			(fabsf(pacman->Get_Speed() - 30.0f) <= FLT_EPSILON))
+			(fabsf(pacman->Get_Speed() - 30.0f) <= FLT_EPSILON) && pacman->is_on_floor)
 		{
 
 			pacman->Set_Speed(100.0f);		// 속도 값으로 이동거리를 나누기 때문에 속도값이 크면느려짐
