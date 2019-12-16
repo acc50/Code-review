@@ -23,7 +23,6 @@ Hole holes[TRAP_COUNT];
 Deceleration_Trap deceleration_traps[TRAP_COUNT];
 
 
-int count = 0;
 
 GLfloat xAngle = 0.0f, yAngle = 0.0f;
 GLfloat yaw = 0.0f, pitch = 0.0f;		// 오일러 각
@@ -229,9 +228,9 @@ void Timer(int a)
 
 		GLfloat x, z;									// 벽의 x, z값
 		GLfloat width, depth;							// 벽의 가로 세로 길이
-		GLfloat rsize = pacman->Get_Size();				// 팩맨의 반지름
+		GLfloat rsize = pacman->Get_Size() + 0.05f;				// 팩맨의 반지름
 
-		GLfloat degree = 0.25f;		// 밀어낼때 판단 정도
+		GLfloat degree = 0.05f;		// 밀어낼때 판단 정도,   값이 너무 작으면 충돌처리 X, 값이 너무 크면 밀어내기 제대로 못함
 
 		for (int i = 0; i < WALL_COUNT; ++i) {
 			w_pos = walls[i].Get_Pos();
@@ -246,9 +245,7 @@ void Timer(int a)
 
 			if (is_Collision(pacman_pos.x, pacman_pos.z, rsize, x, z, width, depth)) {		// 사각형과 원의 충돌검사
 
-
 				// 충돌 시 밀어내기 
-
 				if (x + width - degree < pacman_pos.x - rsize) {		// 벽의 오른쪽에서 충돌
 
 					pacman->Set_Pos_x(x + width + rsize);		// 벽의 오른쪽 + 반지름으로 x좌표 설정

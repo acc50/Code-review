@@ -11,7 +11,8 @@ private:
 	bool is_trapped = false;	// 함정에 걸렸는지 확인하는 변수
 	GLfloat sensitive = 30.0f;		//	이 값이 크면 이동속도가 느림
 	GLfloat rsize = 0.2f;		// 팩맨의 반지름 크기
-
+	
+	int life = 2;
 
 public:
 	Pacman();

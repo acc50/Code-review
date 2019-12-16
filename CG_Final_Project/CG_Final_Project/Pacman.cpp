@@ -67,34 +67,35 @@ void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm
 	glm::vec3 right_dir = glm::vec3(-left_dir.x, -left_dir.y, -left_dir.z);
 
 	if (Up) {
-		EYE.x += front_dir.x / sensitive;
-		EYE.z += front_dir.z / sensitive;
-		AT.x += front_dir.x / sensitive;
-		AT.z += front_dir.z / sensitive;
+		Pos.x += front_dir.x / sensitive;
+		Pos.z += front_dir.z / sensitive;
+
 	}
 
 	if (Down) {
-		EYE.x += back_dir.x / sensitive;
-		EYE.z += back_dir.z / sensitive;
-		AT.x += back_dir.x / sensitive;
-		AT.z += back_dir.z / sensitive;
+		Pos.x += back_dir.x / sensitive;
+		Pos.z += back_dir.z / sensitive;
+
 	}
 
 	if (Left) {
-		EYE.x += left_dir.x / sensitive;
-		EYE.z += left_dir.z / sensitive;
-		AT.x += left_dir.x / sensitive;
-		AT.z += left_dir.z / sensitive;
+		Pos.x += left_dir.x / sensitive;
+		Pos.z += left_dir.z / sensitive;
+
 	}
 
 	if (Right) {
-		EYE.x += right_dir.x / sensitive;
-		EYE.z += right_dir.z / sensitive;
-		AT.x += right_dir.x / sensitive;
-		AT.z += right_dir.z / sensitive;
+		Pos.x += right_dir.x / sensitive;
+		Pos.z += right_dir.z / sensitive;
 	}
 
-	this->Pos = EYE;		// 카메라의 위치에 Pos를 항상 이동시킴
+	glm::vec3 temp = Pos - EYE;  // -> Pos 에서 EYE 로 가는 벡터
+
+	AT.x += temp.x;
+	AT.z += temp.z;
+
+
+	EYE = this->Pos;		// 카메라의 위치에 Pos를 항상 이동시킴
 }
 
 void Pacman::Set_Pos_x(GLfloat x)

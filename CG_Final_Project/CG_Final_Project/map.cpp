@@ -47,7 +47,7 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 
 	// 가로폭을 사용자정의로 지정하면 세로폭은 0.1로  둘중하나는 무조건 0.1
 	float default_width = 1.0f;
-	float default_width2 = 0.1f;
+	float default_width2 = 0.15f;
 
 	//1번 벽
 	walls[0].Set_Wall(-4.0f, -3.5f, default_width2, 1.0f);
