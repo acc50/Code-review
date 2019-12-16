@@ -20,5 +20,4 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
 
 void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[]);
 void draw_map(GLuint ShaderProgram,SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[]);
-void draw_WinItem(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, TrapPoint p);
 #endif
