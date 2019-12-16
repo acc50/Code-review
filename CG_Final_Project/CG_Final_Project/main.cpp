@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall(walls, thorns, holes, deceleration_traps, win_items, ghosts);				// 벽 좌표 설정
 	
-	mciOpen.lpstrElementName = TEXT("ww.mp3");
+	mciOpen.lpstrElementName = TEXT("title.mp3");
 	mciOpen.lpstrDeviceType = TEXT("mpegvideo");
 
 	mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
