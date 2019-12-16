@@ -98,6 +98,39 @@ void myTimer(int a)
 
 	// ---------------------------- 함정 업데이트 부분 -----------------------------
 
+
+
+	// ------------------------- 충돌체크 부분 -------------------------------------
+
+
+
+
+	// -------------------------- 벽과 플레이어 충돌 -----------------------------------
+	glm::vec3 w_pos;
+
+	GLfloat x, z;
+	GLfloat pacman_x, pacmax_z;
+
+	for (int i = 0; i < WALL_COUNT; ++i) {
+		w_pos = walls[i].Get_Pos();
+
+		x = w_pos.x;
+		z = w_pos.z;
+
+		if()
+
+
+
+
+	}
+
+	// -------------------------- 벽과 플레이어 충돌 -----------------------------------
+
+
+
+
+	// ------------------------- 충돌체크 부분 -------------------------------------
+
 	glutPostRedisplay();
 	glutTimerFunc(100, myTimer, 2);
 }
@@ -135,7 +168,7 @@ GLvoid drawScene()
 	draw_map(ShaderProgram, VBO, EBO, ConVBO, ConEBO, walls, thorns, holes, deceleration_traps);
 	
 	//임시 플레이어 위치
-	pacman->Draw(ShaderProgram, VBO, EBO);
+	pacman->Draw(ShaderProgram, SVBO, SNVBO);
 
 	draw_sphere(ShaderProgram, SVBO, SNVBO, 0.0f, 0.0f);
 	float r = 3.0f;

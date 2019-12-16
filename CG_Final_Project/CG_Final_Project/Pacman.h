@@ -9,13 +9,13 @@ private:
 
 	bool is_trapped = false;	// 함정에 걸렸는지 확인하는 변수
 	GLfloat sensitive = 30.0f;		//	이 값이 크면 이동속도가 느림
-	GLfloat size = 0.5f;		// 팩맨의 반지름 크기
+	GLfloat rsize = 0.5f;		// 팩맨의 반지름 크기
 
 public:
 	Pacman();
 	~Pacman();
 
-	void Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO);
+	void Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO);
 	void Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP);
 
 	glm::vec3 Get_Pos();

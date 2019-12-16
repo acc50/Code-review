@@ -13,40 +13,42 @@ Pacman::~Pacman()
 
 }
 
-void Pacman::Draw(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
+void Pacman::Draw(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO)
 {
-	glm::mat4 model = glm::mat4(1.0f); //최종
+	float size = 1.0f / 80.0f;
 
-	glm::mat4 tm = glm::mat4(1.0f);	// 이동
-	glm::mat4 rm = glm::mat4(1.0f); // 회전
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 tm = glm::mat4(1.0f);
+	glm::mat4 sm = glm::mat4(1.0f);
 
-	tm = glm::translate(tm, glm::vec3(this->Pos.x, 1.0f, this->Pos.z));
+	sm = glm::scale(sm, glm::vec3(size, size, size));
+	tm = glm::translate(tm, glm::vec3(Pos.x, 0.35f, Pos.z));
 
-	model = glm::scale(model, glm::vec3(0.7f, 0.7f, 0.7f));
+	model = tm * sm * model;
 
-	model = tm * rm * model;
-
-	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
-	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(colorLocation, 1.0f, 0.0f, 1.0f);
-
-	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
-	glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
+	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	glUniform3f(objColorLocation, 1.0, 1.0f, 0.0f);
 
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
+	int light_id = glGetAttribLocation(ShaderProgram, "vPos");
+	glEnableVertexAttribArray(light_id);
+	glVertexAttribPointer(light_id, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
-	glEnableVertexAttribArray(pos_id);
-	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+	//glBindBuffer(GL_ARRAY_BUFFER, SNVBO);
 
-	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
-	glEnableVertexAttribArray(frag_id);
-	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	//int normal_id = glGetAttribLocation(ShaderProgram, "vNormal");  //노말
+	//
+	//glEnableVertexAttribArray(normal_id);
+	//glVertexAttribPointer(normal_id, 3, GL_FLOAT, GL_FALSE, 0, 0);//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
+
+	glDrawArrays(GL_TRIANGLES, 0, 2880);
+
+	glDisableVertexAttribArray(light_id);
+	//glDisableVertexAttribArray(normal_id);
 }
 
 void Pacman::Move(bool Up, bool Down, bool Right, bool Left, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
@@ -102,7 +104,7 @@ glm::vec3 Pacman::Get_Pos()
 
 GLfloat Pacman::Get_Size()
 {
-	return this->size;
+	return this->rsize;
 }
 
 void Pacman::Set_Speed(GLfloat speed)
