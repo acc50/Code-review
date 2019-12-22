@@ -121,5 +121,11 @@
     <None Include="Vertex.glsl">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="Fragment2.glsl">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="Vertex2.glsl">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>
