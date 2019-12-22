@@ -158,6 +158,7 @@
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Hole.h" />
+    <ClInclude Include="inc\fmod.hpp" />
     <ClInclude Include="InitApp.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="Pacman.h" />
@@ -167,9 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Fragment.glsl" />
-    <None Include="fragment2.glsl" />
+    <None Include="Fragment2.glsl" />
     <None Include="Vertex.glsl" />
-    <None Include="vertex2.glsl" />
+    <None Include="Vertex2.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

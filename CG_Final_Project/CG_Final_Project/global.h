@@ -9,6 +9,10 @@
 #include <vector>
 #include <string>
 #include <cmath>
+
+#include <Windows.h>
+#include <stdio.h>
+#include <float.h>
 #include "file2buf.h"
 #include "Pacman.h"
 

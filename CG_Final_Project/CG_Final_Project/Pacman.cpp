@@ -152,8 +152,6 @@ void Pacman::Jump(bool Space, glm::vec3 &EYE, glm::vec3 &AT, glm::vec3 &UP)
 	if (is_jump) {
 		Pos.y += jump_speed;
 
-		std::cout << Pos.y << std::endl;
-
 		if (Pos.y >= this->MAX_HEIGHT) {		// 최대높이까지 올라가면
 			is_jump = false;
 		}

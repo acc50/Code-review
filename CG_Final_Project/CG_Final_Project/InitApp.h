@@ -6,6 +6,7 @@
 #define WINDOW_HEIGHT 600
 bool InitProgram(unsigned int& ShaderProgram);
 bool InitProgram2(unsigned int& ShaderProgram);
+
 bool Check(unsigned int ShaderProgram);
 
 void CreateAxis(GLuint& Axis);

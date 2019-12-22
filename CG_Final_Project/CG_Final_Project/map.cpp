@@ -21,8 +21,46 @@ TrapPoint itemPoint[ITEM_COUNT] = {
 	{3.5f,1.5f},{2.5f,3.5f},{0.5f,3.5f},{4.5f,4.5f}
 };
 
+//Point patrolPoint[28] = {
+//	{-4.5,-4.5},{-4.5,-2.5},{-3.5,-2.5},{-3.5,-1.5},{-4.5,-1.5},{-4.5,-0.5},{-3.5,-0.5},
+//	{-3.5, 0.5},{-4.5, 0.5},{-4.5, 2.5},{-3.5, 2.5},{-3.5, 3.5},{-4.5, 3.5},{-4.5, 4.5},
+//	{4.5,  4.5},{4.5,  3.5},{3.5,  3.5},{3.5,  2.5},{4.5, 2.5},{4.5,  0.5},{3.5,  0.5},
+//	{3.5, -0.5},{4.5, -0.5},{4.5, -1.5},{3.5, -1.5},{3.5, -2.5},{4.5, -2.5},{4.5, -4.5}
+//};
+
 void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
 {
+	//glm::mat4 model = glm::mat4(1.0f); //최종
+	//glm::mat4 tm = glm::mat4(1.0f);
+	//glm::mat4 sm = glm::mat4(1.0f);
+	//glm::mat4 rm = glm::mat4(1.0f); //회전
+	//tm = glm::translate(tm, glm::vec3(0.0f, 0.0f, 0.0f));
+	//sm = glm::scale(sm, glm::vec3(10.0f, 0.25f, 10.0f));
+	//model = tm * rm * sm *model;
+	//unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	//glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+	//int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	//glUniform3f(colorLocation, 0.0f, 0.0f, 1.0f);
+
+	///*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
+	//glUniform3f(lightPosLocation, 1.0f,1.0f,0.0f);*/
+
+
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+	//GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
+	//glEnableVertexAttribArray(pos_id);
+	//glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+
+	//GLuint frag_id = glGetAttribLocation(ShaderProgram, "vColor");
+	//glEnableVertexAttribArray(frag_id);
+	//glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	//glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::vec3 lightPos = pacman->Get_Pos();
+	//std::cout << lightPos.x << std::endl;
 	glm::mat4 model = glm::mat4(1.0f); //최종
 	glm::mat4 tm = glm::mat4(1.0f);
 	glm::mat4 sm = glm::mat4(1.0f);
@@ -30,34 +68,32 @@ void draw_floor(GLuint ShaderProgram, GLuint VBO, GLuint EBO, Pacman* pacman)
 	tm = glm::translate(tm, glm::vec3(0.0f, 0.0f, 0.0f));
 	sm = glm::scale(sm, glm::vec3(10.0f, 0.25f, 10.0f));
 	model = tm * rm * sm *model;
-	int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
+	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
-	int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightPos");
-	glUniform3f(lightPosLocation, pacman->Get_Pos().x,pacman->Get_Pos().y,pacman->Get_Pos().z);
+	int lightPosLocation = glGetUniformLocation(ShaderProgram, "lightPos");
+	glUniform3f(lightPosLocation, lightPos.x,lightPos.y+2.0f,lightPos.z);
 	int lightColorLocation = glGetUniformLocation(ShaderProgram, "lightColor");
-	glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f);
-	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
-	glUniform3f(objColorLocation, 1.0, 0.0f, 1.0f);
+	glUniform3f(lightColorLocation, 1.0f, 0.0f, 1.0f);
 
-	int range = glGetUniformLocation(ShaderProgram, " lightRange");
-	glUniform1f(range, 0.1f);
+	int objColorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	glUniform3f(objColorLocation, 0.0, 1.0f, 1.0f);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	int light_id = glGetAttribLocation(ShaderProgram, "vPos");
-	glEnableVertexAttribArray(light_id);
-	glVertexAttribPointer(light_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
-	//std::cout << light_id << std::endl;
-	int normal_id = glGetAttribLocation(ShaderProgram, "vNormal");
-	//std::cout << normal_id << std::endl;
-	glEnableVertexAttribArray(normal_id);
-	glVertexAttribPointer(normal_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));//3번째 인자는 다음꺼까지 얼마나 떨어질까, 맨뒤에 인자는 어디서 시작할까 x,y,z,r,g,b,니깐  3번쨰부터시작해서 6칸떨어져야 다음시작위치
 
+	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
+	glEnableVertexAttribArray(pos_id);
+	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+
+	GLuint frag_id = glGetAttribLocation(ShaderProgram, "vNormal");
+	glEnableVertexAttribArray(frag_id);
+	glVertexAttribPointer(frag_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-	glDisableVertexAttribArray(light_id);
-	glDisableVertexAttribArray(normal_id);
+
+
+	
 
 }
 
@@ -163,12 +199,11 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	walls[41].Set_Wall(5.0f, 0.0f, default_width2, 10.0f);
 
 	GLfloat gx = -0.5f;
+	int type = 1;
 	for (int i = 0; i < GHOST_COUNT; ++i) {
-		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre));
+		ghosts[i].Init(gx, -0.5f, color(dre), color(dre), color(dre), type++);
 		gx += 0.5f;
 	}
-
-	// --------------- 함정 랜덤 생성 -------------
 
 
 
@@ -205,7 +240,7 @@ void init_wall(Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap tra
 	}
 }
 
-void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[])
+void draw_map(GLuint ShaderProgram, SuperGLuint super, Wall walls[], Thorn thorns[], Hole holes[], Deceleration_Trap traps[], WinItem items[], Ghost ghosts[],Pacman* pacman)
 {
 	
 

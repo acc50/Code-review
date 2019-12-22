@@ -1,16 +1,23 @@
-#include <Windows.h>
-#include <float.h>
+
+#include "global.h"
 #include "InitApp.h"
-#include "Pacman.h"
+
+
+
+
 
 #define WINDOW_POSITION 100		// 윈도우가 스크린의 어디에서 시작하는지 -> 스크린 좌상단 기준 x,x 에서 윈도우가 열림
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "freeglut.lib")
+#pragma comment(lib, "winmm.lib")
+#include <Mmsystem.h>
+#include <Digitalv.h>
+
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLuint ShaderProgram;
-GLuint ShaderProgram2;
+GLuint lightProgram;
 
 SuperGLuint super;
 
@@ -46,6 +53,13 @@ int itemCOunt = 4;
 //
 EViewPoint view_point = E_DEFAULT_VIEW;
 
+MCI_OPEN_PARMS m_mciOpenParms;
+MCI_PLAY_PARMS m_mciPlayParms;
+DWORD m_dwDeviceID;
+MCI_OPEN_PARMS mciOpen;
+MCI_PLAY_PARMS mciPlay;
+
+
 void Mouse(int button, int state, int x, int y);
 void MouseMotion(int x, int y);
 void PassiveMouse(int x, int y);
@@ -56,6 +70,8 @@ void InputKey(unsigned char key, int x, int y);
 void KeyUP(unsigned char key, int x, int y);
 bool check_move();								// 이동키가 눌렸나 확인하는 함수
 void Set_Cursor();
+
+int dwID;
 
 int main(int argc, char** argv)
 {
@@ -77,15 +93,27 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 	glEnable(GL_CULL_FACE);
+
+	InitProgram2(lightProgram);
 	CreateCon(super.ConEBO, super.ConVBO);
 	CreateCube(ShaderProgram, super.EBO, super.VBO);
 	CreateSphere(super.SVBO, super.SNVBO);
 	Set_Cursor();				// 커서 시작지점 설정
 	init_wall(walls, thorns, holes, deceleration_traps, win_items, ghosts);				// 벽 좌표 설정
 	
+	mciOpen.lpstrElementName = TEXT("title.mp3");
+	mciOpen.lpstrDeviceType = TEXT("mpegvideo");
+
+	mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
+		(DWORD)(LPVOID)&mciOpen);
+	dwID = mciOpen.wDeviceID;
+	mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, // play & repeat
+		(DWORD)(LPVOID)&m_mciPlayParms);
 
 	InitProgram(ShaderProgram);
-	InitProgram2(ShaderProgram2);
+	
+
+
 
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(InputKey);			// 키보드 입력
@@ -100,6 +128,43 @@ int main(int argc, char** argv)
 	glutMainLoop();
 }
 
+GLvoid drawScene()
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+
+
+	
+
+	glUseProgram(ShaderProgram);
+
+
+	view(ShaderProgram, view_point, EYE, AT, UP, T_EYE, T_AT);	// 카메라 
+
+	Myprojection(ShaderProgram, view_point);
+
+	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps, win_items, ghosts, pacman);
+
+	// 플레이어 위치
+	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
+
+	for (int i = 0; i < GHOST_COUNT; ++i) {
+		ghosts[i].Draw(ShaderProgram, super.SVBO, super.SNVBO);
+	}
+
+
+	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, pacman->Get_lifecount(), itemCOunt);
+	
+	glUseProgram(lightProgram);
+	draw_floor(lightProgram, super.VBO, super.EBO, pacman);
+
+	glutSwapBuffers();
+
+
+}
 void myTimer(int a)
 {
 	if (!pacman->Get_is_lived()) {		// 죽었으면
@@ -338,36 +403,42 @@ void Timer(int a)
 
 
 
-		// -------------------------- 플레이어와 유령 충돌 -----------------------------------
-
-
-		glm::vec3 ghost_pos;
-
-		for (int i = 0; i < GHOST_COUNT; ++i) {
-			ghost_pos = ghosts[i].Get_Pos();
-
-			x = ghost_pos.x;
-			z = ghost_pos.z;
-
-			px = pacman_pos.x;
-			pz = pacman_pos.z;
-
-			dx = x - px;
-			dz = z - pz;
-
-			d = ghosts[i].Get_Size() + pacman->Get_Size() + 0.07f;
-
-			if ((dx * dx) + (dz * dz) <= (d * d) && pacman->Get_is_lived()) {	// 충돌 && 팩맨이 살아있다면
-
-				pacman->Die();
-			}
-		}
-
-
-		// -------------------------- 플레이어와 유령 충돌 -----------------------------------
-
+	
 
 	}
+
+	// -------------------------- 플레이어와 유령 충돌 -----------------------------------
+
+
+	glm::vec3 ghost_pos;
+	GLfloat gx, gz, p_x, p_z, d_x, d_z, d2;
+
+	for (int i = 0; i < GHOST_COUNT; ++i) {
+
+		ghosts[i].Update();			// 유령 움직임
+
+		ghost_pos = ghosts[i].Get_Pos();
+		pacman_pos = pacman->Get_Pos();
+
+		gx = ghost_pos.x;
+		gz = ghost_pos.z;
+
+		p_x = pacman_pos.x;
+		p_z = pacman_pos.z;
+
+		d_x = gx - p_x;
+		d_z = gz - p_z;
+
+		d2 = ghosts[i].Get_Size() + pacman->Get_Size() + 0.07f;
+
+		if ((d_x * d_x) + (d_z * d_z) <= (d2 * d2) && pacman->Get_is_lived()) {	// 충돌 && 팩맨이 살아있다면
+
+			pacman->Die();
+		}
+	}
+
+
+	// -------------------------- 플레이어와 유령 충돌 -----------------------------------
 
 
 	glutPostRedisplay();
@@ -400,37 +471,7 @@ void JumpTimer(int a)
 	glutTimerFunc(15, JumpTimer, a);
 }
 
-GLvoid drawScene()
-{
-	//
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-
-	glUseProgram(ShaderProgram);
-
-
-	view(ShaderProgram, view_point, EYE, AT, UP, T_EYE, T_AT);	// 카메라 
-
-	Myprojection(ShaderProgram, view_point);
-
-	draw_map(ShaderProgram, super, walls, thorns, holes, deceleration_traps, win_items, ghosts);
-	draw_floor(ShaderProgram2, super.VBO, super.EBO,pacman);
-	// 플레이어 위치
-	pacman->Draw(ShaderProgram, super.SVBO, super.SNVBO);
-
-	for (int i = 0; i < GHOST_COUNT; ++i) {
-		ghosts[i].Draw(ShaderProgram, super.SVBO, super.SNVBO);
-	}
-
-	
-	renderBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, pacman->Get_lifecount(), itemCOunt);
-
-	glutSwapBuffers();
-
-
-}
 
 GLvoid Reshape(int w, int h)
 {
@@ -487,8 +528,13 @@ void InputKey(unsigned char key, int x, int y)
 
 		break;
 
+	case 'k':
+
+		break;
+
 
 	case 'q':
+
 		glutLeaveMainLoop();
 		break;
 

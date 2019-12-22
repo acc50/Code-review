@@ -1,4 +1,3 @@
-
 #include "InitApp.h"
 
 bool InitProgram(unsigned int& ShaderProgram)
@@ -24,12 +23,15 @@ bool InitProgram(unsigned int& ShaderProgram)
 	if (!Check(ShaderProgram)) {
 		glDeleteProgram(ShaderProgram);
 		return false;
+
 	}
+
+
 }
 bool InitProgram2(unsigned int& ShaderProgram)
 {
-	const char* vertexSource = filetobuf("vertex2.glsl");
-	const char* fragmentSource = filetobuf("fragment2.glsl");
+	const char* vertexSource = filetobuf("Vertex2.glsl");
+	const char* fragmentSource = filetobuf("Fragment2.glsl");
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	glCompileShader(vertexShader);
@@ -54,6 +56,7 @@ bool InitProgram2(unsigned int& ShaderProgram)
 
 
 }
+
 
 
 bool Check(unsigned int ShaderProgram)
@@ -101,27 +104,27 @@ void CreateCon(GLuint& ConEBO, GLuint& ConVBO)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ConEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 18, &indexDeta, GL_STATIC_DRAW);
 }
-void CreateCube(GLuint ShaderProgram, GLuint& EBO, GLuint& VBO)
+void CreateCube(GLuint ShaderProgram,GLuint& EBO, GLuint& VBO)
 {
 
 	GLfloat vertex[] = {
-		-0.5f,0.5f,-0.5f,	-1.0f,1.0f,-1.0f, //0번점
-		-0.5f,0.5f,0.5f,	 -1.0f,1.0f,1.0f,//1번점
-		0.5f,0.5f,0.5f,		 1.0f,1.0f,1.0f,//2번점
-		0.5f,0.5f,-0.5f,	 1.0f,1.0f,-1.0f,//3번점
+		-0.5f,0.5f,-0.5f,	 -1.0f,1.0f,-1.0f, //0번점
+		-0.5f,0.5f,0.5f,	  -1.0f,1.0f,1.0f,//1번점
+		0.5f,0.5f,0.5f,		  1.0f,1.0f,1.0f,//2번점
+		0.5f,0.5f,-0.5f,	  1.0f,1.0f,-1.0f,//3번점
 
-		-0.5f,-0.5f,-0.5f,	 -1.0f,-1.0f,-1.0f,//4번점
-		-0.5f,-0.5f,0.5f,	 -1.0f,-1.0f,1.0f,//5번점
-		0.5f,-0.5f,0.5f,	 1.0f,-1.0f,1.0f,//6번점
-		0.5f,-0.5f,-0.5f,	 1.0f,-1.0f,-1.0f//7번점
+		-0.5f,-0.5f,-0.5f,	  -1.0f,-1.0f,-1.0f,//4번점
+		-0.5f,-0.5f,0.5f,	  -1.0f,-1.0f,1.0f,//5번점
+		0.5f,-0.5f,0.5f,	  1.0f,-1.0f,1.0f,//6번점
+		0.5f,-0.5f,-0.5f,	  1.0f,-1.0f,-1.0f//7번점
 	};
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex, GL_STATIC_DRAW);
 
-
-
+	
+	
 
 	//front
 	GLint gIndices[]
@@ -210,7 +213,7 @@ void Myprojection(GLuint ShaderProgram, EViewPoint viewPoint) {
 		break;
 
 	}
-
+	
 	unsigned int projectionLocation = glGetUniformLocation(ShaderProgram, "projectionTransform");
 	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, &projection[0][0]);
 }
@@ -233,7 +236,7 @@ GLvoid draw_cube(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 	unsigned int modelLocation = glGetUniformLocation(ShaderProgram, "trans");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
-	int colorLocation = glGetUniformLocation(ShaderProgram, "objectColor");
+	int colorLocation =glGetUniformLocation(ShaderProgram, "objectColor");
 	glUniform3f(colorLocation, 0.0f, 0.0f, 1.0f);
 
 	/*int lightPosLocation = glGetUniformLocation(ShaderProgram, "LightColor");
@@ -242,7 +245,7 @@ GLvoid draw_cube(GLuint ShaderProgram, GLuint VBO, GLuint EBO)
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
+	
 	GLuint pos_id = glGetAttribLocation(ShaderProgram, "vPos");
 	glEnableVertexAttribArray(pos_id);
 	glVertexAttribPointer(pos_id, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
@@ -337,7 +340,7 @@ void draw_sphere(GLuint ShaderProgram, GLuint SVBO, GLuint SNVBO, float x, float
 
 bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GLfloat width, GLfloat depth)
 {
-
+	
 	GLfloat left = (rx - width - cr);				//	사각형의 왼쪽 - 구의 반지름
 	GLfloat back = (rz - depth - cr);				//	사각형의 뒷쪽 - 구의 반지름
 	GLfloat front = (rz + depth + cr);				//	사각형의 앞쪽 + 구의 반지름
@@ -355,9 +358,9 @@ bool is_Collision(GLfloat cx, GLfloat cz, GLfloat cr, GLfloat rx, GLfloat rz, GL
 }
 
 
-void renderBitmapCharacter(void *font, int lifeCount, int itemCount)  //폰트, 남은생명, 먹어야할 아이템수
+void renderBitmapCharacter(void *font,int lifeCount,int itemCount)  //폰트, 남은생명, 먹어야할 아이템수
 {
-	const char* life = "life:";
+	const char* life = "life:";   
 	const char* remainjewel = "remain Jewel:";
 	const char *c;
 	char a[10];
