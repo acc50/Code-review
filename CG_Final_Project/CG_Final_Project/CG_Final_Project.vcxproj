@@ -158,6 +158,7 @@
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Hole.h" />
+    <ClInclude Include="inc\fmod.hpp" />
     <ClInclude Include="InitApp.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="Pacman.h" />

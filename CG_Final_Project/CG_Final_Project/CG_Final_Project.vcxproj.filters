@@ -31,24 +31,15 @@
     <Filter Include="헤더 파일\Object">
       <UniqueIdentifier>{fc5667d5-cdad-4b3e-bf6e-87dc56ac4364}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Others">
+      <UniqueIdentifier>{5915241b-6a65-4a4f-8536-764892db89f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Others">
+      <UniqueIdentifier>{e962645a-ef49-4d1c-831d-feb2b2c4b269}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="file2buf.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="InitApp.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="map.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Wall.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="loadObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Thorn.cpp">
@@ -69,23 +60,23 @@
     <ClCompile Include="Ghost.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="file2buf.cpp">
+      <Filter>소스 파일\Others</Filter>
+    </ClCompile>
+    <ClCompile Include="InitApp.cpp">
+      <Filter>소스 파일\Others</Filter>
+    </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>소스 파일\Others</Filter>
+    </ClCompile>
+    <ClCompile Include="loadObj.cpp">
+      <Filter>소스 파일\Others</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="file2buf.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="InitApp.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="global.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Wall.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Thorn.h">
       <Filter>헤더 파일\Trap</Filter>
     </ClInclude>
@@ -103,6 +94,24 @@
     </ClInclude>
     <ClInclude Include="Ghost.h">
       <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="file2buf.h">
+      <Filter>헤더 파일\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>헤더 파일\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="InitApp.h">
+      <Filter>헤더 파일\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>헤더 파일\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\fmod.hpp">
+      <Filter>헤더 파일\Others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
